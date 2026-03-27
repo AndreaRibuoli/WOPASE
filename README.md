@@ -121,9 +121,9 @@ The engine. This is where the actual work happens:
 4. **Downloads GUIDANCE.TXT** — sends an HTTP GET request over TLS, parses the `Content-Length` header, reads the full response body
 5. **Converts to EBCDIC** — uses `QtqIconvOpen` and `iconv` to convert UTF-8 content to the job CCSID
 6. **Processes the manifest** — iterates over each line of GUIDANCE.TXT:
-   - `*PREREQ` lines verify that a required library exists
-   - `*LANGUAGE` lines enable locale-specific source directories
-   - `*OSRELEASE` lines enable OS-version-specific source directories
+   - `*PREREQ` lines verify that a required library exists and installs it if missing
+   - `*LANGUAGE` lines enable locale-specific QCMDSRC source sub-directories
+   - `*OSRELEASE` lines enable OS-version-specific QCLSRC source sub-directories
    - All other lines trigger the download of a source member
 7. **Downloads each source member** — repeats the HTTPS request/response/convert cycle for every member listed
 8. **Stores in QTEMP** — writes each converted source into the appropriate source physical file in QTEMP
@@ -156,19 +156,19 @@ and store it as member `SRCMBR` in source physical file `QTEMP/SRCFILE`.
 *PREREQ   TMKMAKE                 AndreaRibuoli
 ```
 Verifies that library `TMKMAKE` exists on the system before proceeding.
-If missing, the installation stops with a diagnostic message.???
+If missing, the installation submits a new WOPASE/INSTALL.
 
 ```
 *LANGUAGE 2932                    Italian
 ```
 If the system's language feature code matches `2932`, enables downloading
-from a locale-specific subdirectory for subsequent `QCMDSRC` entries.
+from a QCMDSRC locale-specific subdirectory for subsequent `QCMDSRC` entries.
 
 ```
 *OSRELEASE V7R5M0                IBM i 7.5
 ```
 If the system's OS version matches `V7R5M0`, enables downloading
-from a version-specific subdirectory for subsequent `QCLSRC` entries.
+from a QCLSRC version-specific subdirectory for subsequent `QCLSRC` entries.
 
 ### Writing a BUILD.CLLE
 
@@ -226,8 +226,8 @@ No PASE programs, no QShell scripts, no external downloads are involved at runti
 | **Runtime environment** | ILE + PASE | ILE only |
 | **HTTPS client** | `libcurl` (via PASE) | GSKit + sockets (native) |
 | **Bootstrap** | `bash` + `git clone` | *(native — TBD)* |
-| **External dependencies** | `bash`, `curl`, `git` | None |
-| **Minimum IBM i version** | 5.4 (partial), 6.1+ | *(TBD)* |
+| **External dependencies** | `32-bit libcurl` | None |
+| **Minimum IBM i version** | 5.4 (partial), 6.1+ | *7.3* |
 | **GUIDANCE.TXT format** | Same | Same |
 | **BUILD.CLLE interface** | Same | Same |
 
@@ -240,4 +240,4 @@ No PASE programs, no QShell scripts, no external downloads are involved at runti
 
 ## License
 
-*(License to be defined — MIT recommended for consistency with PASERIE)*
+*MIT License*
