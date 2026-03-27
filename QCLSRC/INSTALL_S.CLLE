@@ -1,0 +1,439 @@
+PGM        PARM(&GIT_USER &PACKAGEN &GITTOKEN &TGTLIB &DEVOPT &TGTRLS &OMISSIBLE)
+DCLPRCOPT  LOG(*NO) ALWRTVSRC(*NO)
+COPYRIGHT  TEXT('Andrea Ribuoli © 2026 - WOPASE Installer')
+DCL        VAR(&GIT_USER)   TYPE(*CHAR) LEN(30)
+DCL        VAR(&PACKAGEN)   TYPE(*CHAR) LEN(10)
+DCL        VAR(&GITTOKEN)   TYPE(*CHAR) LEN(40)
+DCL        VAR(&TGTLIB)     TYPE(*CHAR) LEN(10)
+DCL        VAR(&DEVOPT)     TYPE(*CHAR) LEN(1)
+DCL        VAR(&TGTRLS)     TYPE(*CHAR) LEN(10)
+DCL        VAR(&OMISSIBLE)  TYPE(*CHAR) LEN(1)
+DCL        VAR(&VERBOSE)    TYPE(*CHAR) LEN(1)
+DCL        VAR(&HOST_B)     TYPE(*CHAR) LEN(49) VALUE('raw.githubusercontent.com')
+DCL        VAR(&HOST_N)     TYPE(*CHAR) LEN(50) 
+DCL        VAR(&DOMAIN)     TYPE(*INT)  LEN(4) VALUE(2)
+DCL        VAR(&TYPE)       TYPE(*INT)  LEN(4) VALUE(1)
+DCL        VAR(&TERZO)      TYPE(*INT)  LEN(4) VALUE(0)
+DCL        VAR(&SD)         TYPE(*INT)  LEN(4) VALUE(0)
+DCL        VAR(&EC)         TYPE(*INT)  LEN(4) VALUE(0)
+DCL        VAR(&EC_A)       TYPE(*INT)  LEN(4) VALUE(0)
+DCL        VAR(&EC_B)       TYPE(*INT)  LEN(4) VALUE(0)
+DCL        VAR(&EC_C)       TYPE(*INT)  LEN(4) VALUE(0)
+DCL        VAR(&EC_D)       TYPE(*INT)  LEN(4) VALUE(0)
+DCL        VAR(&GSK_HANDLE) TYPE(*PTR)                 ADDRESS(*NULL) 
+DCL        VAR(&GSK_HANDL2) TYPE(*PTR)                 ADDRESS(*NULL) 
+DCL        VAR(&GSK_KEYRNG) TYPE(*INT)  LEN(4) VALUE( 201)
+DCL        VAR(&KEYRING)    TYPE(*CHAR) LEN(8) VALUE('*SYSTEM')
+DCL        VAR(&NULL)       TYPE(*CHAR) LEN(1) VALUE(X'00')
+DCL        VAR(&ZERO)       TYPE(*INT)  LEN(4) VALUE(0)
+DCL        VAR(&GSK_SESTYP) TYPE(*INT)  LEN(4) VALUE( 402)
+DCL        VAR(&GSK_CLIENT) TYPE(*INT)  LEN(4) VALUE( 507)
+DCL        VAR(&IP_ADDRESS) TYPE(*UINT) LEN(4)
+DCL        VAR(&ADDR_NONE)  TYPE(*UINT) LEN(4) VALUE(4294967295)
+DCL        VAR(&HOSTENT_P)  TYPE(*PTR)                 ADDRESS(*NULL) 
+DCL        VAR(&HOSTENT)    TYPE(*CHAR) LEN(64) STG(*BASED) BASPTR(&HOSTENT_P) 
+DCL        VAR(&H5_ADDRLST) TYPE(*PTR) STG(*DEFINED) DEFVAR(&HOSTENT 49)   
+DCL        VAR(&LIST_P)     TYPE(*PTR)                 ADDRESS(*NULL) 
+DCL        VAR(&FIRST_PTR)  TYPE(*PTR) STG(*BASED) BASPTR(&LIST_P) 
+DCL        VAR(&HOST_P)     TYPE(*PTR)                 ADDRESS(*NULL) 
+DCL        VAR(&FIRST_ADDR) TYPE(*UINT) LEN(4) STG(*BASED) BASPTR(&HOST_P) 
+DCL        VAR(&EYECATCHER) TYPE(*CHAR) LEN(16) VALUE(X'436f6e74656e742d4c656e6774683a20')
+DCL        VAR(&EYECATCHE2) TYPE(*CHAR) LEN(14) VALUE(X'3430343a204e6f7420466f756e64')
+DCL        VAR(&CRLF)       TYPE(*CHAR) LEN(2)  VALUE(X'0d0a')
+DCL        VAR(&CRLF_E)     TYPE(*CHAR) LEN(2)  VALUE(X'0d25')
+DCL        VAR(&SOCKADDR)   TYPE(*CHAR) LEN(16) VALUE(X'04020000000000000000000000000000')
+DCL        VAR(&S3_PORT)    TYPE(*UINT) LEN(2) STG(*DEFINED) DEFVAR(&SOCKADDR 3)  
+DCL        VAR(&S4_ADDRESS) TYPE(*UINT) LEN(4) STG(*DEFINED) DEFVAR(&SOCKADDR 5)   
+DCL        VAR(&SIZE)       TYPE(*INT)  LEN( 4) 
+DCL        VAR(&GSK_HSTOUT) TYPE(*INT)  LEN(4) VALUE(6998)
+DCL        VAR(&GSK_FD)     TYPE(*INT)  LEN(4) VALUE(300)
+DCL        VAR(&BUFFER)     TYPE(*CHAR) LEN(32767) 
+DCL        VAR(&START_P)    TYPE(*PTR)                 ADDRESS(*NULL) 
+DCL        VAR(&REQ_P)      TYPE(*PTR)                 ADDRESS(*NULL) 
+DCL        VAR(&CURR_P)     TYPE(*PTR)                 ADDRESS(*NULL) 
+DCL        VAR(&CURR_P2)    TYPE(*PTR)                 ADDRESS(*NULL) 
+DCL        VAR(&EBCDIC_P)   TYPE(*PTR)  ADDRESS(*NULL) 
+DCL        VAR(&COUNT)      TYPE(*INT)  LEN(4)                        
+DCL        VAR(&BYTES_SENT) TYPE(*INT)  LEN(4) VALUE(0)
+DCL        VAR(&FLAG_O)     TYPE(*INT)  LEN(4)  VALUE(16777228)        
+DCL        VAR(&FD_O)       TYPE(*INT)  LEN(4)                         
+DCL        VAR(&POS)        TYPE(*DEC)  LEN(3 0)
+DCL        VAR(&EPOS)       TYPE(*DEC)  LEN(3 0)
+DCL        VAR(&THELEN)     TYPE(*CHAR) LEN(8)
+DCL        VAR(&MASK)       TYPE(*UINT) LEN(8) STG(*DEFINED) DEFVAR(&THELEN 1)
+DCL        VAR(&FIX)        TYPE(*UINT) LEN(8) VALUE(13889313184910721216)
+DCL        VAR(&TOTAL)      TYPE(*INT)  LEN(4) 
+DCL        VAR(&START)      TYPE(*PTR)                 ADDRESS(*NULL) 
+DCL        VAR(&START_E)    TYPE(*PTR)                 ADDRESS(*NULL) 
+DCL        VAR(&IN_BYTES)   TYPE(*UINT) LEN(4)
+DCL        VAR(&OUT_BYTES)  TYPE(*UINT) LEN(4)
+DCL        VAR(&CONVD)      TYPE(*CHAR) LEN(52)
+DCL        VAR(&CDRC)       TYPE(*INT) STG(*DEFINED) DEFVAR(&CONVD)
+DCL        VAR(&F_CODE)     TYPE(*CHAR) LEN(32) +
+             VALUE(X'0000000000000000000000000000000000000000000000000000000000000000')
+DCL        VAR(&T_CODE)     TYPE(*CHAR) LEN(32) +
+             VALUE(X'000004B800000000000000000000000000000000000000000000000000000000')
+DCL        VAR(&CONVB)      TYPE(*CHAR) LEN(52)
+DCL        VAR(&CDRCB)      TYPE(*INT) STG(*DEFINED) DEFVAR(&CONVB)
+DCL        VAR(&F_CODEB)    TYPE(*CHAR) LEN(32) +
+             VALUE(X'000004B800000000000000000000000000000000000000000000000000000000')
+DCL        VAR(&T_CODEB)    TYPE(*CHAR) LEN(32) +
+             VALUE(X'0000000000000000000000000000000000000000000000000000000000000000')
+DCL        VAR(&UTF8)       TYPE(*CHAR) LEN(400)
+DCL        VAR(&UTF8_P)     TYPE(*PTR)                 ADDRESS(*NULL) 
+DCL        VAR(&SPOOL)      TYPE(*CHAR) LEN(6) VALUE(*NONE)
+DCL        VAR(&LOGCLPGM)   TYPE(*CHAR) LEN(5) VALUE(*SAME)
+DCL        VAR(&LOG)        TYPE(*CHAR) LEN(7) VALUE(*SAME)
+DCL        VAR(&LOOP)       TYPE(*LGL) VALUE('1')
+DCL        VAR(&REQUEST)    TYPE(*CHAR) LEN(400)
+DCL        VAR(&REQLEN)     TYPE(*INT) LEN(4)
+DCL        VAR(&TOMBR)      TYPE(*CHAR) LEN(150)
+DCL        VAR(&MODE)       TYPE(*INT) LEN(4) VALUE(7)
+DCL        VAR(&OFLAG)      TYPE(*INT) LEN(4) VALUE(16778570)
+DCL        VAR(&FD)         TYPE(*INT) LEN(4)
+DCL        VAR(&NOFB)       TYPE(*UINT) LEN(4) VALUE(81)
+DCL        VAR(&RTCD)       TYPE(*INT) LEN(4)
+DCL        VAR(&ROW)        TYPE(*CHAR) LEN(81)
+DCL        VAR(&NL)         TYPE(*CHAR) LEN(1) VALUE(X'00')
+DCL        VAR(&X15)        TYPE(*CHAR) LEN(1) VALUE(X'15')
+DCL        VAR(&LINEFEED)   TYPE(*CHAR) LEN(1) VALUE(X'25')
+DCL        VAR(&MSGDTA)     TYPE(*CHAR) LEN(128)
+DCL        VAR(&LANG_DIR)   TYPE(*CHAR) LEN(5) VALUE('     ')
+DCL        VAR(&USELANGDIR) TYPE(*CHAR) LEN(5) VALUE('     ')
+DCL        VAR(&LANG_FC)    TYPE(*CHAR) LEN(4)
+DCL        VAR(&OS_DIR)     TYPE(*CHAR) LEN(7) VALUE('       ')
+DCL        VAR(&USEOSDIR)   TYPE(*CHAR) LEN(7) VALUE('       ')
+DCL        VAR(&CUR_OSV)    TYPE(*CHAR) LEN(6) VALUE('      ')
+DCL        VAR(&CUR_OSV_3)  TYPE(*CHAR) LEN(3) VALUE('   ')
+DCL        VAR(&IMODE)      TYPE(*CHAR) LEN(11)  VALUE('rr+')
+DCL        VAR(&QTMPMBR)    TYPE(*CHAR) LEN(61)
+DCL        VAR(&DOT)        TYPE(*CHAR) LEN(1)   VALUE('.')
+DCL        VAR(&IPOS)       TYPE(*INT)  LEN(2)
+DCL        VAR(&IRC)        TYPE(*INT)  LEN(4)
+DCL        VAR(&FP)         TYPE(*PTR)  ADDRESS(*NULL)
+DCL        VAR(&RFILE)      TYPE(*CHAR) LEN(336) STG(*BASED)   BASPTR(&FP)
+DCL        VAR(&F10_BUFLEN) TYPE(*UINT) LEN(4)   STG(*DEFINED) DEFVAR(&RFILE 193) 
+DCL        VAR(&RIOFB_P)    TYPE(*PTR)  ADDRESS(*NULL)
+DCL        VAR(&RIOFB)      TYPE(*CHAR) LEN(64)  STG(*BASED)   BASPTR(&RIOFB_P)
+DCL        VAR(&R04_NUMBYT) TYPE(*INT)  LEN(4)   STG(*DEFINED) DEFVAR(&RIOFB 37) 
+DCL        VAR(&RAW_ROW)    TYPE(*CHAR) LEN(312) 
+DCL        VAR(&SRCDTA)     TYPE(*CHAR) LEN(300) STG(*DEFINED) DEFVAR(&RAW_ROW 13)  
+DCL        VAR(&OPTS)       TYPE(*INT)  LEN(4)   VALUE(0)
+DCL        VAR(&ERRPTR)     TYPE(*PTR)
+DCL        VAR(&ERRNO)      TYPE(*INT) STG(*BASED) LEN(4) BASPTR(&ERRPTR)
+DCL        VAR(&SUBPATH)    TYPE(*CHAR) LEN(20) VALUE('/main/')
+DCLF       FILE(QTEMP/GUIDE00F)
+
+CALLPRC    PRC('QtqIconvOpen') PARM((&T_CODE) (&F_CODE)) RTNVAL(&CONVD)
+IF         COND(&CDRC = -1) THEN(DO)
+SNDPGMMSG  MSG('Application error with iconv')
+GOTO       CMDLBL(FINE)
+ENDDO
+CALLPRC    PRC('QtqIconvOpen') PARM((&T_CODEB) (&F_CODEB)) RTNVAL(&CONVB)
+IF         COND(&CDRCB = -1) THEN(DO)
+SNDPGMMSG  MSG('Application error with iconv')
+GOTO       CMDLBL(FINE)
+ENDDO
+
+CHGVAR     VAR(&IMODE) VALUE(&IMODE *TCAT &NL)
+RTVDTAARA  DTAARA(QGPL/QSS1MRI (26 4)) RTNVAR(&LANG_FC)
+MONMSG     MSGID(CPF0000)
+RTVDTAARA  DTAARA(PASE_TEST (26 4)) RTNVAR(&LANG_FC)
+MONMSG     MSGID(CPF0000)
+RTVDTAARA  DTAARA(QGPL/QSS1MRI (1 6)) RTNVAR(&CUR_OSV)
+MONMSG     MSGID(CPF0000)
+RTVDTAARA  DTAARA(PASE_TEST (1 6)) RTNVAR(&CUR_OSV)
+MONMSG     MSGID(CPF0000)
+CHGVAR     VAR(&CUR_OSV_3) VALUE(%SST(&CUR_OSV 2 1) *CAT +
+                                 %SST(&CUR_OSV 4 1) *CAT +
+                                 %SST(&CUR_OSV 6 1))
+CHGVAR VAR(&VERBOSE) VALUE(&OMISSIBLE)
+MONMSG MSGID(MCH3601) EXEC(CHGVAR VAR(&VERBOSE) VALUE('N'))
+CHGJOB JOBMSGQFL(*WRAP) 
+IF COND(&DEVOPT = 'B') THEN(DO)
+CHGVAR VAR(&SPOOL) VALUE(*PRINT)
+CHGVAR VAR(&LOG)  VALUE(*SECLVL)
+CHGVAR VAR(&LOGCLPGM) VALUE(*YES)
+CHGVAR VAR(&DEVOPT) VALUE('N')
+ENDDO
+CRTSRCPF FILE(QTEMP/QDDSPF)
+CHGVAR VAR(&TOMBR) VALUE('/QSYS.LIB/QTEMP.LIB/QDDSPF.FILE/GUIDE00F.MBR')
+CALLPRC PRC('open') PARM((&TOMBR) (&OFLAG *BYVAL) (&MODE *BYVAL)) RTNVAL(&FD)
+CHGVAR VAR(&ROW) VALUE('                R GUIDE')
+CALLSUBR SUBR(EMIT80)
+CHGVAR VAR(&ROW) VALUE('                  SRCFILE       10A')
+CALLSUBR SUBR(EMIT80)
+CHGVAR VAR(&ROW) VALUE('                  SRCMBR        10A')
+CALLSUBR SUBR(EMIT80)
+CHGVAR VAR(&ROW) VALUE('                  SRCTYPE       10A')
+CALLSUBR SUBR(EMIT80)
+CHGVAR VAR(&ROW) VALUE('                  SRCDESC       50A')
+CALLSUBR SUBR(EMIT80)
+CALLPRC PRC('close') PARM((&FD *BYVAL)) RTNVAL(&RTCD)
+CRTPF FILE(QTEMP/GUIDE00F) SRCFILE(QTEMP/QDDSPF) OPTION(*NOSRC *NOLIST)
+
+CALLPRC PRC('socket') PARM((&DOMAIN *BYVAL) (&TYPE *BYVAL) (&TERZO *BYVAL)) RTNVAL(&SD)
+CALLPRC PRC('gsk_environment_open')     PARM((&GSK_HANDLE *BYREF) ) RTNVAL(&EC_A)
+CHGVAR    VAR(&KEYRING)    VALUE(&KEYRING *TCAT &NULL) 
+CALLPRC PRC('gsk_attribute_set_buffer') PARM((&GSK_HANDLE *BYVAL) +
+            (&GSK_KEYRNG *BYVAL) (&KEYRING *BYREF) (&ZERO *BYVAL)) RTNVAL(&EC_B)
+CALLPRC PRC('gsk_attribute_set_enum')   PARM((&GSK_HANDLE *BYVAL) +
+            (&GSK_SESTYP *BYVAL) (&GSK_CLIENT *BYVAL)) RTNVAL(&EC_C)
+CALLPRC PRC('gsk_environment_init')     PARM((&GSK_HANDLE *BYVAL)) RTNVAL(&EC_D)
+CHGVAR    VAR(&HOST_N) VALUE(&HOST_B *TCAT &NULL) 
+CALLPRC PRC('inet_addr')                PARM((&HOST_N *BYREF)) RTNVAL(&IP_ADDRESS)
+IF COND(&IP_ADDRESS *EQ &ADDR_NONE) THEN(DO)
+CALLPRC PRC('gethostbyname')            PARM((&HOST_N *BYREF)) RTNVAL(&HOSTENT_P)
+IF COND(&HOSTENT_P *EQ *NULL) THEN(DO)
+SNDPGMMSG MSG('Host not found')
+GOTO CMDLBL(QUIT)
+ENDDO
+ELSE CMD(DO)
+CHGVAR VAR(&LIST_P) VALUE(&H5_ADDRLST)
+CHGVAR VAR(&HOST_P) VALUE(&FIRST_PTR)
+CHGVAR VAR(&IP_ADDRESS) VALUE(&FIRST_ADDR)
+ENDDO
+ENDDO
+CHGVAR VAR(&S3_PORT)    VALUE(443)
+CHGVAR VAR(&S4_ADDRESS) VALUE(&IP_ADDRESS)
+CHGVAR    VAR(&SIZE)    VALUE(%SIZE(&SOCKADDR)) 
+CALLPRC PRC('connect')  PARM((&SD *BYVAL) (&SOCKADDR *BYREF) (&SIZE *BYVAL)) RTNVAL(&EC)
+IF COND(&EC *EQ -1) THEN(DO)
+SNDPGMMSG MSG('Connect failed')
+GOTO CMDLBL(QUIT)
+ENDDO
+CALLPRC PRC('gsk_secure_soc_open') PARM((&GSK_HANDLE *BYVAL) (&GSK_HANDL2 *BYREF)) RTNVAL(&EC)
+CHGVAR    VAR(&SIZE)    VALUE(30) 
+CALLPRC PRC('gsk_attribute_set_numeric_value') PARM((&GSK_HANDL2 *BYVAL) +
+            (&GSK_HSTOUT *BYVAL) (&SIZE *BYVAL)) RTNVAL(&EC)
+IF COND(&EC *NE 0) THEN(DO)
+SNDPGMMSG MSG('Setting handshake timeout failed')
+GOTO CMDLBL(QUIT)
+ENDDO
+CALLPRC PRC('gsk_attribute_set_numeric_value') PARM((&GSK_HANDL2 *BYVAL) +
+            (&GSK_FD *BYVAL) (&SD *BYVAL)) RTNVAL(&EC)
+IF COND(&EC *NE 0) THEN(DO)
+SNDPGMMSG MSG('Setting socket handle failed')
+GOTO CMDLBL(QUIT)
+ENDDO
+CALLPRC PRC('gsk_secure_soc_init') PARM((&GSK_HANDL2 *BYVAL)) RTNVAL(&EC)
+
+CHGVAR VAR(&SRCFILE)  VALUE(' ')     
+CHGVAR VAR(&SRCMBR)   VALUE(GUIDANCE) 
+CHGVAR VAR(&SRCTYPE)  VALUE(TXT)     
+CHGVAR VAR(&TOMBR) VALUE('/QSYS.LIB/QTEMP.LIB/QDDSPF.FILE/GUIDANCE.MBR' *CAT &NULL)
+
+CALLSUBR SUBR(RICHIESTA)
+
+CPYF FROMFILE(QTEMP/QDDSPF) TOFILE(QTEMP/GUIDE00F) +
+  FROMMBR(GUIDANCE) TOMBR(GUIDE00F) MBROPT(*ADD) FMTOPT(*CVTSRC)
+DLTF FILE(QTEMP/QDDSPF)
+IF COND(&VERBOSE *EQ 'L') +
+   THEN(OVRDBF FILE(STDOUT) TOFILE(QPRINT) OVRSCOPE(*JOB) SHARE(*YES))
+DOWHILE COND(&LOOP)
+ RCVF
+ MONMSG MSGID(CPF0864) EXEC(LEAVE)
+ IF COND(&VERBOSE *EQ 'L') THEN(DO)
+   IF COND(%SST(&SRCFILE 1 10) *EQ   '*PREREQ   ') THEN(DO)
+     CHGVAR     VAR(&MSGDTA) VALUE( 'Comment: '      *CAT &SRCFILE *CAT +
+                                    ' PackageName: ' *CAT &SRCMBR  *CAT +
+                                    ' Options: '     *CAT &SRCTYPE *CAT +
+                                    ' GitHub USER: ' *CAT &SRCDESC *TCAT &X15 *CAT &NL)
+   ENDDO
+   ELSE DO
+     IF COND(%SST(&SRCFILE 1 10) *EQ '*LANGUAGE ') THEN(DO)
+       CHGVAR     VAR(&MSGDTA) VALUE( 'Comment: '      *CAT &SRCFILE *CAT +
+                                      ' Language FC: ' *CAT &SRCMBR  *CAT +
+                                      ' Options: '     *CAT &SRCTYPE *CAT +
+                                      ' Description: ' *CAT &SRCDESC *TCAT &X15 *CAT &NL)
+     ENDDO
+     ELSE DO
+       IF COND(%SST(&SRCFILE 1 10) *EQ '*OSRELEASE') THEN(DO)
+         CHGVAR     VAR(&MSGDTA) VALUE( 'Comment: '      *CAT &SRCFILE *CAT +
+                                        '    IBM i OS: ' *CAT &SRCMBR  *CAT +
+                                        ' Options: '     *CAT &SRCTYPE *CAT +
+                                        ' Description: ' *CAT &SRCDESC *TCAT &X15 *CAT &NL)
+       ENDDO
+       ELSE DO
+         CHGVAR     VAR(&MSGDTA) VALUE( 'File: '       *CAT &SRCFILE *CAT +
+                                        ' Member: '    *CAT &SRCMBR  *CAT +
+                                        ' Attribute: ' *CAT &SRCTYPE *CAT +
+                                        ' Text: '      *CAT &SRCDESC *TCAT &X15 *CAT &NL)
+       ENDDO                                 
+     ENDDO                                 
+   ENDDO                                 
+   CALLPRC    PRC('printf') PARM((&MSGDTA))  
+ ENDDO
+ IF COND(%SST(&SRCFILE 1 10) *EQ '*PREREQ   ') THEN(DO)
+   CHKOBJ OBJ(QSYS/&SRCMBR) OBJTYPE(*LIB) AUT(*READ)
+   MONMSG MSGID(CPF9802) EXEC(DO)
+     CHGVAR VAR(&MSGDTA) VALUE('Library ' *CAT &SRCMBR *TCAT ' does not exist or not authorized to')
+     CALLPRC    PRC('printf') PARM((&MSGDTA))
+     RETURN
+   ENDDO  
+   MONMSG MSGID(CPF9801) EXEC(DO)
+    INSTALL REPO_OWNER(&SRCDESC) REPOSITORY(&SRCMBR) +
+      YOURGITPAT(&GITTOKEN) VERBOSE(&VERBOSE)
+   ENDDO 
+   ITERATE
+ ENDDO
+ IF COND(%SST(&SRCFILE 1 10) *EQ '*LANGUAGE ') THEN(DO)
+   IF COND(%SST(&SRCMBR 1 4) *EQ &LANG_FC) THEN( +
+     CHGVAR VAR(&LANG_DIR) VALUE('/' *CAT &LANG_FC))
+   ITERATE
+ ENDDO
+ IF COND(%SST(&SRCFILE 1 10) *EQ '*OSRELEASE') THEN(DO)
+   IF COND(%SST(&SRCMBR 1 6) *EQ &CUR_OSV) THEN( +
+     CHGVAR VAR(&OS_DIR) VALUE('/' *CAT &CUR_OSV))
+   ITERATE
+ ENDDO
+ IF COND(%SST(&SRCFILE 1 1) *EQ '*') THEN(ITERATE)
+ CRTSRCPF FILE(QTEMP/&SRCFILE) RCDLEN(132)
+ MONMSG MSGID(CPF0000)
+ IF  COND((&LANG_DIR *NE '     ') *AND (&SRCFILE *EQ 'QCMDSRC   ')) THEN( +
+                  CHGVAR VAR(&USELANGDIR) VALUE(&LANG_DIR))
+ IF  COND((&OS_DIR *NE '       ') *AND (&SRCFILE *EQ 'QCLSRC   ')) THEN( +
+                  CHGVAR VAR(&USEOSDIR) VALUE(&OS_DIR))
+ IF   COND(&USELANGDIR *NE '     ') THEN(CHGVAR VAR(&USELANGDIR) VALUE('     '))
+ IF   COND(&USEOSDIR *NE '       ') THEN(CHGVAR VAR(&USEOSDIR) VALUE('       '))
+                          
+ CHGVAR VAR(&TOMBR) VALUE('/QSYS.LIB/QTEMP.LIB/' *CAT &SRCFILE +
+                          *TCAT '.FILE/' *CAT &SRCMBR *TCAT '.MBR' *CAT &NULL)
+
+ CALLSUBR SUBR(RICHIESTA)
+ 
+ IF COND(&SRCTYPE *NE *BLANK) THEN(DO)
+  CHGPFM FILE(QTEMP/&SRCFILE) MBR(&SRCMBR) SRCTYPE(&SRCTYPE)
+  MONMSG MSGID(CPF0000 CPD0133)
+  IF COND((&SRCFILE *EQ 'QCLSRC') *AND (&SRCTYPE *EQ 'CLLE')) THEN(DO)                             
+   CHGVAR VAR(&QTMPMBR) VALUE('QTEMP/QCLSRC(' *CAT &SRCMBR *TCAT ')' *CAT &NL)                             
+   CALLPRC PRC('_Ropen')   PARM(&QTMPMBR &IMODE) RTNVAL(&FP)                                                 
+   CALLPRC PRC('_Rreadn')  PARM((&FP *BYVAL) &RAW_ROW (&F10_BUFLEN *BYVAL) (&OPTS *BYVAL)) RTNVAL(&RIOFB_P)  
+   DOWHILE COND(&R04_NUMBYT *GT 0)                                                                           
+     CHGVAR VAR(&SRCDTA) VALUE(%TRIML(&SRCDTA))                                                               
+     IF (%SST(&SRCDTA 1 17) *EQ 'INCLUDE SRCSTMF(''') THEN(DO)                                                
+       CHGVAR VAR(&IPOS) VALUE(%SCAN(&DOT &SRCDTA 18))                                                         
+       IF COND(&IPOS *GT 0) THEN(DO)                                                                           
+         CHGVAR VAR(&IPOS) VALUE(&IPOS - 18)                                                                    
+         CHGVAR VAR(&SRCDTA) VALUE('INCLUDE SRCMBR(' *CAT %SST(&SRCDTA 18 &IPOS) *CAT ')')                      
+         CALLPRC PRC('_Rupdate') PARM((&FP *BYVAL) &RAW_ROW (&F10_BUFLEN *BYVAL)) RTNVAL(&RIOFB_P)              
+       ENDDO                                                                                                   
+     ENDDO                                                                                                    
+     CALLPRC PRC('_Rreadn')  PARM((&FP *BYVAL) &RAW_ROW (&F10_BUFLEN *BYVAL) (&OPTS *BYVAL)) RTNVAL(&RIOFB_P) 
+   ENDDO                                                                                                     
+   CALLPRC PRC('_Rfeod') PARM((&FP *BYVAL)) RTNVAL(&IRC)                                                                        
+   CALLPRC PRC('_Rclose') PARM((&FP *BYVAL)) RTNVAL(&IRC)                                                                        
+  ENDDO                                                                                                      
+ ENDDO   
+ IF COND(&SRCDESC *NE *BLANK) +  
+   THEN(CHGPFM FILE(QTEMP/&SRCFILE) MBR(&SRCMBR) TEXT(&SRCDESC))
+  
+ENDDO
+IF COND(&VERBOSE *EQ 'L') THEN(DO)
+   CHGVAR     VAR(&MSGDTA) VALUE( 'Version: '    *CAT &CUR_OSV *CAT +
+             '                     Language Feature: ' *CAT &LANG_FC *CAT &NL)
+   CALLPRC    PRC('printf') PARM((&MSGDTA))
+   DLTOVR     FILE(STDOUT) LVL(*JOB)
+ENDDO
+QUIT: CALLPRC PRC('gsk_environment_close')    PARM((&GSK_HANDLE *BYREF)) RTNVAL(&EC)
+CALLPRC PRC('close') PARM((&SD *BYVAL)) RTNVAL(&EC)
+
+ADDLIBLE   LIB(TMKMAKE)
+MONMSG MSGID(CPF0000)
+CRTBNDCL PGM(QTEMP/BUILD) SRCFILE(QTEMP/QCLSRC) SRCMBR(BUILD) +
+         OUTPUT(&SPOOL) ALWRTVSRC(*NO)
+MONMSG MSGID(CPF0000) EXEC(GOTO CMDLBL(FINE))
+CHGJOB LOG(4 00 &LOG) LOGCLPGM(&LOGCLPGM)    
+CALL PGM(QTEMP/BUILD) PARM(&DEVOPT &TGTRLS &TGTLIB)
+MONMSG MSGID(CPF0000)
+
+SUBR SUBR(EMIT80)
+  CHGVAR VAR(&ROW) VALUE(%SST(&ROW 1 80) *CAT &LINEFEED)
+  CALLPRC PRC('write') PARM((&FD *BYVAL) (&ROW) (&NOFB *BYVAL)) RTNVAL(&RTCD)
+ENDSUBR
+
+SUBR SUBR(RICHIESTA)
+RETRY:  CHGVAR VAR(&REQUEST) +
+          VALUE('GET /' *CAT &GIT_USER *TCAT '/' *CAT &PACKAGEN *TCAT &SUBPATH)    
+  IF COND(%TRIM(&SRCFILE) *NE ' ') THEN( +
+    CHGVAR VAR(&REQUEST) VALUE(&REQUEST *TCAT &SRCFILE  *TCAT '/'))
+  CHGVAR VAR(&REQUEST) +
+    VALUE(&REQUEST *TCAT &SRCMBR *TCAT '.' *CAT &SRCTYPE *TCAT ' HTTP/1.1' *CAT &CRLF_E *CAT +
+                        'Host:' *BCAT  &HOST_B  *TCAT ':443'               *CAT &CRLF_E *CAT +
+                        'User-Agent: IBM_i_ILE_CL_WOPASE'                  *CAT &CRLF_E *CAT +
+                        'Accept: text/html'                                *CAT &CRLF_E *CAT +
+                        'Accept-Language: it-IT,it'                        *CAT &CRLF_E *CAT +
+                        'Connection: keep-alive'              *CAT &CRLF_E *CAT &CRLF_E *CAT &NULL)
+  CHGVAR VAR(&REQ_P) VALUE(%ADDRESS(&REQUEST))
+  CALLPRC PRC('strlen') PARM((&REQ_P *BYVAL)) RTNVAL(&REQLEN) 
+  CHGVAR VAR(&IN_BYTES) VALUE(&REQLEN)
+  CHGVAR VAR(&OUT_BYTES) VALUE(%SIZE(&UTF8))
+  CHGVAR VAR(&UTF8_P) VALUE(%ADDRESS(&UTF8))
+  CHGVAR VAR(&START_P) VALUE(&UTF8_P) 
+  CALLPRC PRC('iconv') PARM((&CONVD *BYVAL) (&REQ_P) (&IN_BYTES) (&UTF8_P) (&OUT_BYTES)) RTNVAL(&EC) 
+  CHGVAR VAR(&OUT_BYTES) VALUE(%OFFSET(&UTF8_P) - %OFFSET(&START_P))
+  CHGVAR VAR(&UTF8) VALUE(%SST(&UTF8 1 &OUT_BYTES))
+  CALLPRC PRC('gsk_secure_soc_write') PARM((&GSK_HANDL2 *BYVAL) (&UTF8 *BYREF) +
+                           (&OUT_BYTES *BYVAL) (&BYTES_SENT *BYREF)) RTNVAL(&EC)
+  CHGVAR    VAR(&SIZE)    VALUE(%SIZE(&BUFFER)) 
+  CALLPRC PRC('gsk_secure_soc_read') PARM((&GSK_HANDL2 *BYVAL) (&BUFFER *BYREF) +
+                           (&SIZE *BYVAL) (&BYTES_SENT *BYREF)) RTNVAL(&EC)
+ CHGVAR VAR(&POS)  VALUE(%SCAN(&EYECATCHER &BUFFER))
+ CHGVAR VAR(&POS)  VALUE(&POS + %SIZE(&EYECATCHER))
+ CHGVAR VAR(&EPOS) VALUE(%SCAN(&CRLF &BUFFER &POS))
+ CHGVAR VAR(&SIZE) VALUE(&EPOS - &POS)
+ CHGVAR VAR(&EPOS) VALUE(&EPOS - 1)
+ CHGVAR VAR(&THELEN) VALUE(%SST(&BUFFER &POS &SIZE))
+ CHGVAR VAR(&POS)  VALUE(&SIZE + 1)
+ DOWHILE COND(&POS *LE %SIZE(&THELEN))
+   CHGVAR VAR(%SST(&THELEN &POS 1)) VALUE(&NULL)
+   CHGVAR VAR(&POS)  VALUE(&POS + 1)
+ ENDDO
+ CHGVAR VAR(&MASK) VALUE(&MASK + &FIX)
+ CHGVAR VAR(&THELEN) VALUE(%SST(&THELEN 1 &SIZE))
+ CHGVAR VAR(&TOTAL) VALUE(&THELEN)
+ CALLPRC PRC('malloc') PARM((&TOTAL *BYVAL)) RTNVAL(&CURR_P)
+ CHGVAR VAR(&START) VALUE(&CURR_P)
+ DOWHILE COND(&TOTAL *GT 0) 
+  CHGVAR    VAR(&SIZE)    VALUE(%SIZE(&BUFFER)) 
+  CALLPRC PRC('gsk_secure_soc_read') PARM((&GSK_HANDL2 *BYVAL) (&BUFFER *BYREF) +
+                         (&SIZE *BYVAL) (&BYTES_SENT *BYREF)) RTNVAL(&EC)
+  CHGVAR VAR(&POS)  VALUE(%SCAN(&EYECATCHE2 &BUFFER))
+  IF COND(&POS *EQ 1) THEN(DO)  /* 404: Not Found */
+    IF COND(%TRIM(&SUBPATH) *EQ '/main/') THEN(DO)  
+      CHGVAR VAR(&SUBPATH) VALUE('/refs/heads/master/')
+      GOTO CMDLBL(RETRY)
+    ENDDO
+    ELSE CMD(DO)
+      SNDPGMMSG MSG('404: Not Found' *BCAT &SRCMBR *TCAT '.' *CAT &SRCTYPE)
+    ENDDO
+  ENDDO                         
+  CHGVAR VAR(&TOTAL) VALUE(&TOTAL - &BYTES_SENT)
+  /* CHGVAR VAR(%SST(&MOVING 1 &BYTES_SENT)) VALUE(%SST(&BUFFER 1 &BYTES_SENT)) */
+  CALLPRC PRC('memcpy') PARM((&CURR_P *BYVAL) (&BUFFER *BYREF) (&BYTES_SENT *BYVAL)) RTNVAL(&CURR_P2)
+  CHGVAR VAR(&CURR_P) VALUE(&CURR_P2)
+  CHGVAR VAR(%OFFSET(&CURR_P)) VALUE(%OFFSET(&CURR_P) + &BYTES_SENT)
+ ENDDO 
+ CHGVAR VAR(&TOTAL) VALUE(&THELEN)
+ CALLPRC PRC('malloc') PARM((&TOTAL *BYVAL)) RTNVAL(&EBCDIC_P)
+ CHGVAR VAR(&START_E) VALUE(&EBCDIC_P)
+ CHGVAR VAR(&CURR_P) VALUE(&START)
+ CHGVAR VAR(&IN_BYTES) VALUE(&TOTAL)
+ CHGVAR VAR(&OUT_BYTES) VALUE(&TOTAL)
+ CALLPRC PRC('iconv') PARM((&CONVB *BYVAL) (&CURR_P) (&IN_BYTES) (&EBCDIC_P) (&OUT_BYTES)) RTNVAL(&EC) 
+ CHGVAR VAR(&TOTAL) VALUE(%OFFSET(&EBCDIC_P) - %OFFSET(&START_E))
+ CALLPRC PRC('free') PARM((&START *BYVAL)) RTNVAL(&EC)
+ CALLPRC PRC('open') PARM(&TOMBR (&FLAG_O *BYVAL)) RTNVAL(&FD_O) 
+ CALLPRC PRC('write') PARM((&FD_O *BYVAL) (&START_E *BYVAL) (&TOTAL *BYVAL)) RTNVAL(&COUNT)
+ IF COND(&COUNT *EQ -1) THEN(DO)
+   CALLPRC    PRC('__errno') RTNVAL(&ERRPTR)
+   SNDPGMMSG  MSG('Sul file' *BCAT &SRCMBR *TCAT '.' *CAT &SRCTYPE *BCAT +
+                  'non ha funzionato la write() =' *BCAT +
+                  '(errno ' *CAT %CHAR(&ERRNO) *TCAT ')')
+ ENDDO  
+ CALLPRC PRC('close') PARM((&FD_O *BYVAL))
+ CALLPRC PRC('free') PARM((&START_E *BYVAL)) RTNVAL(&EC) 
+ENDSUBR
+
+FINE: ENDPGM
+

@@ -1,0 +1,97 @@
+             PGM        PARM(&DEVOPT_P &TGTRLS_P &TGTLIB_P)
+             DCLPRCOPT  LOG(*NO) ALWRTVSRC(*NO)
+             DCL        VAR(&DEVOPT_P) TYPE(*CHAR) LEN(1)
+             DCL        VAR(&TGTRLS_P) TYPE(*CHAR) LEN(10)
+             DCL        VAR(&TGTLIB_P) TYPE(*CHAR) LEN(10)
+             DCL        VAR(&DEVOPT) TYPE(*CHAR) LEN(1)
+             DCL        VAR(&TGTRLS) TYPE(*CHAR) LEN(10)
+             DCL        VAR(&SRCLIB) TYPE(*CHAR) LEN(10) VALUE(QTEMP)
+             DCL        VAR(&BLDLIB) TYPE(*CHAR) LEN(10) VALUE(QTEMP)
+             DCL        VAR(&TGTLIB) TYPE(*CHAR) LEN(10)
+             DCL        VAR(&STMT) TYPE(*CHAR) LEN(28) 
+             DCL    VAR(&RCVVAR) TYPE(*CHAR) LEN(70) VALUE(X'0000004600000000')                       
+             DCL    VAR(&BYTES)      TYPE(*INT)                LEN(4)  VALUE(70)                      
+             DCL    VAR(&BYTESAVAIL) TYPE(*INT)  STG(*DEFINED) LEN(4)  DEFVAR(&RCVVAR  1)             
+             DCL    VAR(&BYTESRTN)   TYPE(*INT)  STG(*DEFINED) LEN(4)  DEFVAR(&RCVVAR  5)             
+             DCL    VAR(&SPLFNAME)   TYPE(*CHAR) STG(*DEFINED) LEN(10) DEFVAR(&RCVVAR  9)             
+             DCL    VAR(&JOBNAME)    TYPE(*CHAR) STG(*DEFINED) LEN(10) DEFVAR(&RCVVAR 19)             
+             DCL    VAR(&JOBUSER)    TYPE(*CHAR) STG(*DEFINED) LEN(10) DEFVAR(&RCVVAR 29)             
+             DCL    VAR(&JOBNBR)     TYPE(*CHAR) STG(*DEFINED) LEN(6)  DEFVAR(&RCVVAR 39)             
+             DCL    VAR(&SPLNBR)     TYPE(*INT)  STG(*DEFINED) LEN(4)  DEFVAR(&RCVVAR 45)             
+             DCL    VAR(&ERRORCODE)  TYPE(*CHAR)               LEN(8)  VALUE(X'0000000000000000')     
+             MONMSG MSGID(CPF0000) EXEC(GOTO CMDLBL(DUMP))
+             CHGVAR     VAR(&DEVOPT) VALUE(&DEVOPT_P)
+             MONMSG     MSGID(MCH3601) EXEC(CHGVAR VAR(&DEVOPT) VALUE(L))
+             CHGVAR     VAR(&TGTRLS) VALUE(&TGTRLS_P)
+             MONMSG     MSGID(MCH3601) EXEC(CHGVAR VAR(&TGTRLS) VALUE(*CURRENT))
+             CHGVAR     VAR(&TGTLIB) VALUE(&TGTLIB_P)
+             MONMSG     MSGID(MCH3601) EXEC(CHGVAR VAR(&TGTLIB) VALUE(*PACKAGEN))
+             IF         COND(&TGTLIB = '*PACKAGEN ') THEN(CHGVAR VAR(&TGTLIB) VALUE(WOPASE))
+             CHGVAR     VAR(&STMT) VALUE('QSYS/CRTLIB LIB(' *CAT &TGTLIB *TCAT ')') 
+             CALL       PGM(QCMDEXC) PARM(&STMT 28)
+             MONMSG     MSGID(CPF0000)             
+             IF         COND(&DEVOPT = 'N') THEN(DO)
+             DLTF       FILE(&TGTLIB/QCMDSRC)
+             MONMSG     MSGID(CPF0000)
+             DLTF       FILE(&TGTLIB/QCLSRC)
+             MONMSG     MSGID(CPF0000)
+             DLTF       FILE(&TGTLIB/QDDSPF)
+             MONMSG     MSGID(CPF0000)
+             DLTPGM     PGM(&TGTLIB/BUILD)
+             MONMSG     MSGID(CPF0000)
+             ENDDO
+             IF         COND(&DEVOPT = 'Y') THEN(DO)
+             CRTSRCPF   FILE(&TGTLIB/QCMDSRC) RCDLEN(132)
+             MONMSG     MSGID(CPF0000)
+             CRTSRCPF   FILE(&TGTLIB/QCLSRC) RCDLEN(132)
+             MONMSG     MSGID(CPF0000)
+             CRTSRCPF   FILE(&TGTLIB/QDDSPF) RCDLEN(132)
+             MONMSG     MSGID(CPF0000)
+             CPYSRCF    FROMFILE(&SRCLIB/QCMDSRC) TOFILE(&TGTLIB/QCMDSRC) FROMMBR(*ALL)
+             CPYSRCF    FROMFILE(&SRCLIB/QCLSRC) TOFILE(&TGTLIB/QCLSRC) FROMMBR(*ALL)
+             CPYSRCF    FROMFILE(&SRCLIB/QDDSPF) TOFILE(&TGTLIB/QDDSPF) FROMMBR(*ALL)
+             CHGVAR     VAR(&SRCLIB) VALUE(&TGTLIB)
+             ENDDO
+             IF         COND(&DEVOPT = 'L') THEN(DO)
+             CHGVAR     VAR(&SRCLIB) VALUE(&TGTLIB)
+             ENDDO
+             IF         COND(&DEVOPT = 'Y') THEN(DO)
+             CRTBNDCL   PGM(&TGTLIB/BUILD) SRCFILE(&SRCLIB/QCLSRC) SRCMBR(BUILD) +
+                          TGTRLS(&TGTRLS) OUTPUT(*NONE) ALWRTVSRC(*NO)
+             MONMSG     MSGID(CPF0000)
+             ENDDO
+             CRTBNDCL   PGM(&TGTLIB/GETPAT) SRCFILE(&SRCLIB/QCLSRC) SRCMBR(GETPAT) +
+                        TGTRLS(&TGTRLS) OUTPUT(*NONE) ALWRTVSRC(*YES)
+             MONMSG     MSGID(CPF0000)
+
+             CRTCMD     CMD(&TGTLIB/INSTALL) PGM(&TGTLIB/INSTALL)  +
+                          SRCFILE(&SRCLIB/QCMDSRC) SRCMBR(INSTALL) +
+                          TEXT('WOPASE installer (3/3)') PRDLIB(&TGTLIB)
+             DLTSPLF    FILE(INSTALL)
+             MONMSG     MSGID(CPF3303) EXEC(DO)
+             CALL   PGM(QSPRILSP) PARM(&RCVVAR &BYTES 'SPRL0100' &ERRORCODE)                          
+             MONMSG MSGID(CPF333A) EXEC(GOTO CMDLBL(SKIP1))                                            
+             DLTSPLF FILE(&SPLFNAME) JOB(&JOBNBR/&JOBUSER/&JOBNAME) SPLNBR(&SPLNBR)                     
+SKIP1:       ENDDO
+             DLTF       FILE(QTEMP/GUIDE00F)
+             MONMSG     MSGID(CPF0000)
+             CRTPF      FILE(QTEMP/GUIDE00F) SRCFILE(&SRCLIB/QDDSPF) +
+                          OPTION(*NOSRC *NOLIST)
+             CRTCLMOD   MODULE(&BLDLIB/INSTALL_S) +
+                          SRCFILE(&SRCLIB/QCLSRC) SRCMBR(INSTALL_S) +
+                          TGTRLS(&TGTRLS) OUTPUT(*PRINT) ALWRTVSRC(*NO)
+             CRTCLMOD   MODULE(&BLDLIB/INSTALL) +
+                          SRCFILE(&SRCLIB/QCLSRC) SRCMBR(INSTALL) +
+                          TGTRLS(&TGTRLS) OUTPUT(*NONE) ALWRTVSRC(*NO)
+             CRTPGM     PGM(&TGTLIB/INSTALL_S) +
+                          MODULE(&BLDLIB/INSTALL_S) +
+                          TGTRLS(&TGTRLS) TEXT('WOPASE installer (2/3)')
+             MONMSG     MSGID(CPF0000)
+             CRTPGM     PGM(&TGTLIB/INSTALL) +
+                          MODULE(&BLDLIB/INSTALL) +
+                          TGTRLS(&TGTRLS) TEXT('WOPASE installer (1/3)')
+             MONMSG     MSGID(CPF0000)
+             RETURN
+DUMP: DSPJOB JOB(*) OUTPUT(*PRINT) OPTION(*ALL) 
+             DMPCLPGM              
+RETURN:      ENDPGM

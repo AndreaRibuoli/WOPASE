@@ -1,0 +1,7 @@
+*LANGUAGE 2932                Italian 
+QCLSRC    BUILD     CLLE      Development mode (CALL WOPASE/BUILD)
+QCLSRC    GETPAT    CLLE      Requires a GITTOKEN dataarea in *LIBL
+QCLSRC    INSTALL_S CLLE      Program INSTALL_S
+QCLSRC    INSTALL   CLLE      Program INSTALL
+QCMDSRC   INSTALL   CMD       Command INSTALL    
+QDDSPF    GUIDE00F  PF        Template     
