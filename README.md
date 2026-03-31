@@ -67,6 +67,15 @@ in the IBM i **\*SYSTEM** certificate store enabling SSL sessions
 with `raw.githubusercontent.com`. When missing, they can be 
 loaded by means of IBM i *Digital Certificate Manager* (**DCM**).
 
+In order for you to run WOPASE/INSTALL successfully also check if you are authorized
+to `/QIBM/UserData/ICSS/Cert/Server` path:
+
+![NoAuth](MissingAuth.png)
+
+You will need the following rights:
+
+* **\*RX** on `/QIBM/UserData/ICSS/Cert/Server` and 
+* **\*R** on `/QIBM/UserData/ICSS/Cert/Server/DEFAULT.KDB`
 
 ## Updates
 
