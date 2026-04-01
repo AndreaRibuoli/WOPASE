@@ -77,6 +77,14 @@ You will need the following rights:
 * **\*RX** on `/QIBM/UserData/ICSS/Cert/Server` and 
 * **\*R** on `/QIBM/UserData/ICSS/Cert/Server/DEFAULT.KDB`
 
+To diagnose what is not working as expected you can always use the `VERBOSE(L)` option.
+In this case the printout will report:
+
+```
+*...+....1....+....2....+....3....+....4....+
+API gsk_environment_init() failed (6003)     
+```
+
 ## Updates
 
 To perform an update, *WOPASE* can rebuild itself from latest GitHub source code:
