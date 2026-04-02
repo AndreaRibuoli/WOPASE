@@ -81,8 +81,8 @@ To diagnose what is not working as expected you can always use the `VERBOSE(L)` 
 In this case the printout will report:
 
 ```
-*...+....1....+....2....+....3....+....4....+
-API gsk_environment_init() failed (6003)     
+*...+....1....+....2....+....3....+....4....+....5....+....6....+....7....+....8
+API gsk_environment_init() failed with GSK_IBMI_ERROR_NO_ACCESS (6003)          
 ```
 
 ## Updates
