@@ -78,16 +78,20 @@ SKIP1:       ENDDO
              CRTPF      FILE(QTEMP/GUIDE00F) SRCFILE(&SRCLIB/QDDSPF) +
                           OPTION(*NOSRC *NOLIST)
              MONMSG     MSGID(CPF0000)
+             CRTCLMOD   MODULE(&BLDLIB/GSK_DECO) +
+                          SRCFILE(&SRCLIB/QCLSRC) SRCMBR(GSK_DECO) +
+                          TGTRLS(&TGTRLS) OUTPUT(*NONE) ALWRTVSRC(*NO)
+             MONMSG     MSGID(CPF0000)
              CRTCLMOD   MODULE(&BLDLIB/INSTALL_S) +
                           SRCFILE(&SRCLIB/QCLSRC) SRCMBR(INSTALL_S) +
-                          TGTRLS(&TGTRLS) OUTPUT(*PRINT) ALWRTVSRC(*NO)
+                          TGTRLS(&TGTRLS) OUTPUT(*NONE) ALWRTVSRC(*NO)
              MONMSG     MSGID(CPF0000)
              CRTCLMOD   MODULE(&BLDLIB/INSTALL) +
                           SRCFILE(&SRCLIB/QCLSRC) SRCMBR(INSTALL) +
-                          TGTRLS(&TGTRLS) OUTPUT(*PRINT) ALWRTVSRC(*NO)
+                          TGTRLS(&TGTRLS) OUTPUT(*NONE) ALWRTVSRC(*NO)
              MONMSG     MSGID(CPF0000)
              CRTPGM     PGM(&TGTLIB/INSTALL_S) +
-                          MODULE(&BLDLIB/INSTALL_S) +
+                          MODULE(&BLDLIB/INSTALL_S &BLDLIB/GSK_DECO) +
                           TGTRLS(&TGTRLS) TEXT('WOPASE installer (2/3)')
              MONMSG     MSGID(CPF0000)
              CRTPGM     PGM(&TGTLIB/INSTALL) +

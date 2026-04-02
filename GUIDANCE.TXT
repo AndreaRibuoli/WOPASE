@@ -2,6 +2,7 @@
 *OSRELEASEV7R1M0              IBM i OS 7.1
 QCLSRC    BUILD     CLLE      Development mode (CALL WOPASE/BUILD)
 QCLSRC    GETPAT    CLLE      Requires a GITTOKEN dataarea in *LIBL
+QCLSRC    GSK_DECO  CLLE      Module GSK_DECO used by INSTALL_S
 QCLSRC    INSTALL_S CLLE      Program INSTALL_S
 QCLSRC    INSTALL   CLLE      Program INSTALL
 QCMDSRC   INSTALL   CMD       Command INSTALL    
