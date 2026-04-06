@@ -26,14 +26,6 @@ DCL        VAR(&EC_F)       TYPE(*INT)  LEN(4) VALUE(999)
 DCL        VAR(&EC_G)       TYPE(*INT)  LEN(4) VALUE(999)
 DCL        VAR(&EC_H)       TYPE(*INT)  LEN(4) VALUE(999)
 DCL        VAR(&EC_I)       TYPE(*INT)  LEN(4) VALUE(999)
-DCL        VAR(&EC_A_CH)    TYPE(*CHAR) LEN(10)          
-DCL        VAR(&EC_B_CH)    TYPE(*CHAR) LEN(10)          
-DCL        VAR(&EC_C_CH)    TYPE(*CHAR) LEN(10)          
-DCL        VAR(&EC_D_CH)    TYPE(*CHAR) LEN(10)          
-DCL        VAR(&EC_F_CH)    TYPE(*CHAR) LEN(10)          
-DCL        VAR(&EC_G_CH)    TYPE(*CHAR) LEN(10)          
-DCL        VAR(&EC_H_CH)    TYPE(*CHAR) LEN(10)          
-DCL        VAR(&EC_I_CH)    TYPE(*CHAR) LEN(10)          
 DCL        VAR(&EC_J)       TYPE(*INT)  LEN(4) VALUE(999)
 DCL        VAR(&EC_K)       TYPE(*INT)  LEN(4) VALUE(999)
 DCL        VAR(&EC_L)       TYPE(*INT)  LEN(4) VALUE(999)
@@ -144,6 +136,7 @@ DCL        VAR(&ERRNO_CH)   TYPE(*CHAR) LEN(10)
 DCL        VAR(&ERRNO)      TYPE(*INT) STG(*BASED) LEN(4) BASPTR(&ERRPTR)
 DCL        VAR(&SUBPATH)    TYPE(*CHAR) LEN(20) VALUE('/main/')
 DCL        VAR(&ERRMSG)     TYPE(*CHAR) LEN(132) VALUE(*BLANK)
+DCL        VAR(&MEANS)      TYPE(*CHAR) LEN(60)
 DCLF       FILE(QTEMP/GUIDE00F)
 
 CALLPRC    PRC('QtqIconvOpen') PARM((&T_CODE) (&F_CODE)) RTNVAL(&CONVD)
@@ -208,36 +201,36 @@ IF COND(&SD *LT 0) THEN(DO)
 ENDDO
 CALLPRC PRC('gsk_environment_open')     PARM((&GSK_HANDLE *BYREF) ) RTNVAL(&EC_A)
 IF COND(&EC_A *NE 0) THEN(DO)
-  CHGVAR VAR(&EC_A_CH) VALUE(&EC_A)
+  CALLPRC PRC('GSK_DECO') PARM((&EC_A *BYREF) (&MEANS *BYREF))
   CHGVAR VAR(&MSGDTA) +
-    VALUE('API gsk_environment_open() failed (' *CAT &EC_A_CH *TCAT ')' *CAT &X15 *CAT &NL)
-    CALLPRC    PRC('printf') PARM(&MSGDTA) RTNVAL(&EC_P) 
+    VALUE('API gsk_environment_open() failed with ' *CAT &MEANS *TCAT  &X15 *CAT &NL)
+  CALLPRC    PRC('printf') PARM(&MSGDTA) RTNVAL(&EC_P) 
   GOTO CMDLBL(CLOSE1)
 ENDDO
 CHGVAR    VAR(&KEYRING)    VALUE(&KEYRING *TCAT &NULL) 
 CALLPRC PRC('gsk_attribute_set_buffer') PARM((&GSK_HANDLE *BYVAL) +
             (&GSK_KEYRNG *BYVAL) (&KEYRING *BYREF) (&ZERO *BYVAL)) RTNVAL(&EC_B)
 IF COND(&EC_B *NE 0) THEN(DO)
-  CHGVAR VAR(&EC_B_CH) VALUE(&EC_B)
+  CALLPRC PRC('GSK_DECO') PARM((&EC_B *BYREF) (&MEANS *BYREF))
   CHGVAR VAR(&MSGDTA) +
-    VALUE('API gsk_attribute_set_buffer() failed (' *CAT &EC_B_CH *TCAT ')' *CAT &X15 *CAT &NL)
+    VALUE('API gsk_attribute_set_buffer() failed with ' *CAT &MEANS *TCAT  &X15 *CAT &NL)
     CALLPRC    PRC('printf') PARM(&MSGDTA) RTNVAL(&EC_P) 
   GOTO CMDLBL(CLOSE1)
 ENDDO
 CALLPRC PRC('gsk_attribute_set_enum')   PARM((&GSK_HANDLE *BYVAL) +
             (&GSK_SESTYP *BYVAL) (&GSK_CLIENT *BYVAL)) RTNVAL(&EC_C)
 IF COND(&EC_C *NE 0) THEN(DO)
-  CHGVAR VAR(&EC_C_CH) VALUE(&EC_C)
+  CALLPRC PRC('GSK_DECO') PARM((&EC_C *BYREF) (&MEANS *BYREF))
   CHGVAR VAR(&MSGDTA) +
-    VALUE('API gsk_attribute_set_enum() failed (' *CAT &EC_C_CH *TCAT ')' *CAT &X15 *CAT &NL)
+    VALUE('API gsk_attribute_set_enum() failed with ' *CAT &MEANS *TCAT  &X15 *CAT &NL)
     CALLPRC    PRC('printf') PARM(&MSGDTA) RTNVAL(&EC_P) 
   GOTO CMDLBL(CLOSE1)
 ENDDO
 CALLPRC PRC('gsk_environment_init')     PARM((&GSK_HANDLE *BYVAL)) RTNVAL(&EC_D)
 IF COND(&EC_D *NE 0) THEN(DO)
-  CHGVAR VAR(&EC_D_CH) VALUE(&EC_D)
+  CALLPRC PRC('GSK_DECO') PARM((&EC_D *BYREF) (&MEANS *BYREF))
   CHGVAR VAR(&MSGDTA) +
-    VALUE('API gsk_environment_init() failed (' *CAT &EC_D_CH *TCAT ')' *CAT &X15 *CAT &NL)
+    VALUE('API gsk_environment_init() failed with ' *CAT &MEANS *TCAT  &X15 *CAT &NL)
     CALLPRC    PRC('printf') PARM(&MSGDTA) RTNVAL(&EC_P) 
   GOTO CMDLBL(CLOSE1)
 ENDDO
@@ -269,9 +262,9 @@ IF COND(&EC_E *EQ -1) THEN(DO)
 ENDDO
 CALLPRC PRC('gsk_secure_soc_open') PARM((&GSK_HANDLE *BYVAL) (&GSK_HANDL2 *BYREF)) RTNVAL(&EC_F)
 IF COND(&EC_F *NE 0) THEN(DO)
-  CHGVAR VAR(&EC_F_CH) VALUE(&EC_F)
+  CALLPRC PRC('GSK_DECO') PARM((&EC_F *BYREF) (&MEANS *BYREF))
   CHGVAR VAR(&MSGDTA) +
-    VALUE('API gsk_secure_soc_open() failed (' *CAT &EC_F_CH *TCAT ')' *CAT &X15 *CAT &NL)
+    VALUE('API gsk_secure_soc_open() failed with ' *CAT &MEANS *TCAT  &X15 *CAT &NL)
   CALLPRC    PRC('printf') PARM(&MSGDTA) RTNVAL(&EC_P) 
   GOTO CMDLBL(CLOSE1)
 ENDDO
@@ -279,26 +272,26 @@ CHGVAR    VAR(&SIZE)    VALUE(30)
 CALLPRC PRC('gsk_attribute_set_numeric_value') PARM((&GSK_HANDL2 *BYVAL) +
             (&GSK_HSTOUT *BYVAL) (&SIZE *BYVAL)) RTNVAL(&EC_G)
 IF COND(&EC_G *NE 0) THEN(DO)
-  CHGVAR VAR(&EC_G_CH) VALUE(&EC_G)
+  CALLPRC PRC('GSK_DECO') PARM((&EC_G *BYREF) (&MEANS *BYREF))
   CHGVAR VAR(&MSGDTA) +
-    VALUE('API gsk_attribute_set_numeric_value() failed (' *CAT &EC_G_CH *TCAT ')' *CAT &X15 *CAT &NL)
+    VALUE('API gsk_attribute_set_numeric_value() failed with ' *CAT &MEANS *TCAT  &X15 *CAT &NL)
   CALLPRC    PRC('printf') PARM(&MSGDTA) RTNVAL(&EC_P) 
   GOTO CMDLBL(CLOSE2)
 ENDDO
 CALLPRC PRC('gsk_attribute_set_numeric_value') PARM((&GSK_HANDL2 *BYVAL) +
             (&GSK_FD *BYVAL) (&SD *BYVAL)) RTNVAL(&EC_H)
 IF COND(&EC_H *NE 0) THEN(DO)
-  CHGVAR VAR(&EC_H_CH) VALUE(&EC_H)
+  CALLPRC PRC('GSK_DECO') PARM((&EC_H *BYREF) (&MEANS *BYREF))
   CHGVAR VAR(&MSGDTA) +
-    VALUE('API gsk_attribute_set_numeric_value() failed (' *CAT &EC_H_CH *TCAT ')' *CAT &X15 *CAT &NL)
+    VALUE('API gsk_attribute_set_numeric_value() failed with ' *CAT &MEANS *TCAT  &X15 *CAT &NL)
   CALLPRC    PRC('printf') PARM(&MSGDTA) RTNVAL(&EC_P) 
   GOTO CMDLBL(CLOSE2)
 ENDDO
 CALLPRC PRC('gsk_secure_soc_init') PARM((&GSK_HANDL2 *BYVAL)) RTNVAL(&EC_I)
 IF COND(&EC_I *NE 0) THEN(DO)
-  CHGVAR VAR(&EC_I_CH) VALUE(&EC_I)
+  CALLPRC PRC('GSK_DECO') PARM((&EC_I *BYREF) (&MEANS *BYREF))
   CHGVAR VAR(&MSGDTA) +
-    VALUE('API gsk_secure_soc_init() failed (' *CAT &EC_I_CH *TCAT ')' *CAT &X15 *CAT &NL)
+    VALUE('API gsk_secure_soc_init() failed with ' *CAT &MEANS *TCAT  &X15 *CAT &NL)
   CALLPRC    PRC('printf') PARM(&MSGDTA) RTNVAL(&EC_P) 
   GOTO CMDLBL(CLOSE2)
 ENDDO

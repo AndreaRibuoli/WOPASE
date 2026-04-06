@@ -200,7 +200,7 @@ CALLPRC PRC('gsk_environment_open')     PARM((&GSK_HANDLE *BYREF) ) RTNVAL(&EC_A
 IF COND(&EC_A *NE 0) THEN(DO)
   CALLPRC PRC('GSK_DECO') PARM((&EC_A *BYREF) (&MEANS *BYREF))
   CHGVAR VAR(&MSGDTA) +
-    VALUE('API gsk_environment_open() failed with ' *CAT &MEANS *TCAT  &X15 *CAT &NL)    
+    VALUE('API gsk_environment_open() failed with ' *CAT &MEANS *TCAT  &X15 *CAT &NL)
   CALLPRC    PRC('printf') PARM(&MSGDTA) RTNVAL(&EC_P) 
   GOTO CMDLBL(CLOSE1)
 ENDDO
@@ -303,7 +303,7 @@ CALLSUBR SUBR(RICHIESTA)
 
 IF COND(&ERRMSG *NE *BLANK) THEN(DO)
   CHGVAR VAR(&MSGDTA) +
-    VALUE('Subroutine RICHIESTA failed (' *CAT &ERRMSG *TCAT  &X15 *CAT &NL)
+    VALUE('Subroutine RICHIESTA failed (' *CAT &ERRMSG *TCAT ')' *CAT &X15 *CAT &NL)
   CALLPRC    PRC('printf') PARM(&MSGDTA) RTNVAL(&EC_P)
   GOTO CMDLBL(QUIT)
 ENDDO
@@ -386,7 +386,7 @@ DOWHILE COND(&LOOP)
  
  IF COND(&ERRMSG *NE *BLANK) THEN(DO)
    CHGVAR VAR(&MSGDTA) +
-     VALUE('Subroutine RICHIESTA failed (' *CAT &ERRMSG *TCAT  &X15 *CAT &NL)
+     VALUE('Subroutine RICHIESTA failed (' *CAT &ERRMSG *TCAT ')' *CAT &X15 *CAT &NL)
    CALLPRC    PRC('printf') PARM(&MSGDTA) RTNVAL(&EC_P) 
    GOTO CMDLBL(QUIT)
  ENDDO
