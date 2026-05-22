@@ -425,14 +425,13 @@ DOWHILE COND(&LOOP)
          CALLPRC PRC('_Rupdate') PARM((&FP *BYVAL) &RAW_ROW (&F10_BUFLEN *BYVAL)) RTNVAL(&RIOFB_P)              
        ENDDO                                                                                                   
      ENDDO                                                                                                    
-     CALLPRC PRC('_Rreadn')  PARM((&FP *BYVAL) &RAW_ROW (&F10_BUFLEN *BYVAL) (&OPTS *BYVAL)) RTNVAL(&RIOFB_P) 
+     CALLPRC PRC('_Rreadn') PARM((&FP *BYVAL) &RAW_ROW (&F10_BUFLEN *BYVAL) (&OPTS *BYVAL)) RTNVAL(&RIOFB_P)
    ENDDO                                                                                                     
-   CALLPRC PRC('_Rfeod') PARM((&FP *BYVAL)) RTNVAL(&IRC)                                                                        
-   CALLPRC PRC('_Rclose') PARM((&FP *BYVAL)) RTNVAL(&IRC)                                                                        
+   CALLPRC PRC('_Rfeod') PARM((&FP *BYVAL)) RTNVAL(&IRC)
+   CALLPRC PRC('_Rclose') PARM((&FP *BYVAL)) RTNVAL(&IRC)
   ENDDO                                                                                                      
  ENDDO   
- IF COND(&SRCDESC *NE *BLANK) +  
-   THEN(CHGPFM FILE(QTEMP/&SRCFILE) MBR(&SRCMBR) TEXT(&SRCDESC))  
+ IF COND(&SRCDESC *NE *BLANK) THEN(CHGPFM FILE(QTEMP/&SRCFILE) MBR(&SRCMBR) TEXT(&SRCDESC))
 ENDDO
 
 ADDLIBLE   LIB(TMKMAKE)
