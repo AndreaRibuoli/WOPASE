@@ -8,6 +8,7 @@
              DCL        VAR(&SRCLIB) TYPE(*CHAR) LEN(10) VALUE(QTEMP)
              DCL        VAR(&BLDLIB) TYPE(*CHAR) LEN(10) VALUE(QTEMP)
              DCL        VAR(&TGTLIB) TYPE(*CHAR) LEN(10)
+             DCL        VAR(&OUTPUT) TYPE(*CHAR) LEN(10) VALUE('*NONE')
              DCL        VAR(&STMT) TYPE(*CHAR) LEN(28) 
              DCL    VAR(&RCVVAR) TYPE(*CHAR) LEN(70) VALUE(X'0000004600000000')                       
              DCL    VAR(&BYTES)      TYPE(*INT)                LEN(4)  VALUE(70)                      
@@ -22,15 +23,18 @@
              MONMSG MSGID(CPF0000) EXEC(GOTO CMDLBL(DUMP))
              CHGVAR     VAR(&DEVOPT) VALUE(&DEVOPT_P)
              MONMSG     MSGID(MCH3601) EXEC(CHGVAR VAR(&DEVOPT) VALUE(L))
+             IF         COND(&DEVOPT *EQ 'V') THEN(DO)
+             CHGVAR     VAR(&OUTPUT) VALUE('*PRINT')
+             ENDDO
              CHGVAR     VAR(&TGTRLS) VALUE(&TGTRLS_P)
              MONMSG     MSGID(MCH3601) EXEC(CHGVAR VAR(&TGTRLS) VALUE(*CURRENT))
              CHGVAR     VAR(&TGTLIB) VALUE(&TGTLIB_P)
              MONMSG     MSGID(MCH3601) EXEC(CHGVAR VAR(&TGTLIB) VALUE(*PACKAGEN))
-             IF         COND(&TGTLIB = '*PACKAGEN ') THEN(CHGVAR VAR(&TGTLIB) VALUE(WOPASE))
+             IF         COND(&TGTLIB *EQ '*PACKAGEN ') THEN(CHGVAR VAR(&TGTLIB) VALUE(WOPASE))
              CHGVAR     VAR(&STMT) VALUE('QSYS/CRTLIB LIB(' *CAT &TGTLIB *TCAT ')') 
              CALL       PGM(QCMDEXC) PARM(&STMT 28)
              MONMSG     MSGID(CPF0000)             
-             IF         COND(&DEVOPT = 'N') THEN(DO)
+             IF         COND((&DEVOPT *EQ 'N') *OR (&DEVOPT *EQ 'V')) THEN(DO)
              DLTF       FILE(&TGTLIB/QCMDSRC)
              MONMSG     MSGID(CPF0000)
              DLTF       FILE(&TGTLIB/QCLSRC)
@@ -40,7 +44,7 @@
              DLTPGM     PGM(&TGTLIB/BUILD)
              MONMSG     MSGID(CPF0000)
              ENDDO
-             IF         COND(&DEVOPT = 'Y') THEN(DO)
+             IF         COND(&DEVOPT *EQ 'Y') THEN(DO)
              CRTSRCPF   FILE(&TGTLIB/QCMDSRC) RCDLEN(132)
              MONMSG     MSGID(CPF0000)
              CRTSRCPF   FILE(&TGTLIB/QCLSRC) RCDLEN(132)
@@ -52,43 +56,44 @@
              CPYSRCF    FROMFILE(&SRCLIB/QDDSPF) TOFILE(&TGTLIB/QDDSPF) FROMMBR(*ALL)
              CHGVAR     VAR(&SRCLIB) VALUE(&TGTLIB)
              ENDDO
-             IF         COND(&DEVOPT = 'L') THEN(DO)
+             IF         COND(&DEVOPT *EQ 'L') THEN(DO)
              CHGVAR     VAR(&SRCLIB) VALUE(&TGTLIB)
              ENDDO
-             IF         COND(&DEVOPT = 'Y') THEN(DO)
+             IF         COND(&DEVOPT *EQ 'Y') THEN(DO)
              CRTBNDCL   PGM(&TGTLIB/BUILD) SRCFILE(&SRCLIB/QCLSRC) SRCMBR(BUILD) +
-                          TGTRLS(&TGTRLS) OUTPUT(*NONE) ALWRTVSRC(*NO)
+                          TGTRLS(&TGTRLS) OUTPUT(&OUTPUT) ALWRTVSRC(*NO)
              MONMSG     MSGID(CPF0000)
              ENDDO
              CRTBNDCL   PGM(&TGTLIB/GETPAT) SRCFILE(&SRCLIB/QCLSRC) SRCMBR(GETPAT) +
-                        TGTRLS(&TGTRLS) OUTPUT(*NONE) ALWRTVSRC(*YES)
+                        TGTRLS(&TGTRLS) OUTPUT(&OUTPUT) ALWRTVSRC(*YES)
              MONMSG     MSGID(CPF0000)
 
              CRTCMD     CMD(&TGTLIB/INSTALL) PGM(&TGTLIB/INSTALL)  +
                           SRCFILE(&SRCLIB/QCMDSRC) SRCMBR(INSTALL) +
                           TEXT('WOPASE installer (3/3)') PRDLIB(&TGTLIB)
+             IF         COND(&DEVOPT *EQ 'V') THEN(GOTO CMDLBL(SKIP1))             
              DLTSPLF    FILE(INSTALL)
              MONMSG     MSGID(CPF3303) EXEC(DO)
              CALL   PGM(QSPRILSP) PARM(&RCVVAR &BYTES 'SPRL0100' &ERRORCODE)                          
              MONMSG MSGID(CPF333A) EXEC(GOTO CMDLBL(SKIP1))                                            
              DLTSPLF FILE(&SPLFNAME) JOB(&JOBNBR/&JOBUSER/&JOBNAME) SPLNBR(&SPLNBR)                     
-SKIP1:       ENDDO
-             DLTF       FILE(QTEMP/GUIDE00F)
+             ENDDO
+SKIP1:       DLTF       FILE(QTEMP/GUIDE00F)
              MONMSG     MSGID(CPF0000)
              CRTPF      FILE(QTEMP/GUIDE00F) SRCFILE(&SRCLIB/QDDSPF) +
                           OPTION(*NOSRC *NOLIST)
              MONMSG     MSGID(CPF0000)
              CRTCLMOD   MODULE(&BLDLIB/GSK_DECO) +
                           SRCFILE(&SRCLIB/QCLSRC) SRCMBR(GSK_DECO) +
-                          TGTRLS(&TGTRLS) OUTPUT(*NONE) ALWRTVSRC(*NO)
+                          TGTRLS(&TGTRLS) OUTPUT(&OUTPUT) ALWRTVSRC(*NO)
              MONMSG     MSGID(CPF0000)
              CRTCLMOD   MODULE(&BLDLIB/INSTALL_S) +
                           SRCFILE(&SRCLIB/QCLSRC) SRCMBR(INSTALL_S) +
-                          TGTRLS(&TGTRLS) OUTPUT(*NONE) ALWRTVSRC(*NO)
+                          TGTRLS(&TGTRLS) OUTPUT(&OUTPUT) ALWRTVSRC(*NO)
              MONMSG     MSGID(CPF0000)
              CRTCLMOD   MODULE(&BLDLIB/INSTALL) +
                           SRCFILE(&SRCLIB/QCLSRC) SRCMBR(INSTALL) +
-                          TGTRLS(&TGTRLS) OUTPUT(*NONE) ALWRTVSRC(*NO)
+                          TGTRLS(&TGTRLS) OUTPUT(&OUTPUT) ALWRTVSRC(*NO)
              MONMSG     MSGID(CPF0000)
              CRTPGM     PGM(&TGTLIB/INSTALL_S) +
                           MODULE(&BLDLIB/INSTALL_S &BLDLIB/GSK_DECO) +
