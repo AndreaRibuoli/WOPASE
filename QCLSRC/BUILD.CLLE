@@ -84,7 +84,7 @@ SKIP1:       ENDDO
              MONMSG     MSGID(CPF0000)
              CRTCLMOD   MODULE(&BLDLIB/INSTALL_S) +
                           SRCFILE(&SRCLIB/QCLSRC) SRCMBR(INSTALL_S) +
-                          TGTRLS(&TGTRLS) OUTPUT(*NONE) ALWRTVSRC(*NO)
+                          TGTRLS(&TGTRLS) OUTPUT(*PRINT) ALWRTVSRC(*NO)
              MONMSG     MSGID(CPF0000)
              CRTCLMOD   MODULE(&BLDLIB/INSTALL) +
                           SRCFILE(&SRCLIB/QCLSRC) SRCMBR(INSTALL) +
