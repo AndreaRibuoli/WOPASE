@@ -70,6 +70,7 @@ DCL        VAR(&COUNT)      TYPE(*INT)  LEN(4)
 DCL        VAR(&BYTES_SENT) TYPE(*INT)  LEN(4) VALUE(0)
 DCL        VAR(&FLAG_O)     TYPE(*INT)  LEN(4)  VALUE(16777228)        
 DCL        VAR(&FD_O)       TYPE(*INT)  LEN(4)                         
+DCL        VAR(&STEP)       TYPE(*DEC)  LEN(3 0)
 DCL        VAR(&POS)        TYPE(*DEC)  LEN(5 0)
 DCL        VAR(&EPOS)       TYPE(*DEC)  LEN(5 0)
 DCL        VAR(&THELEN)     TYPE(*CHAR) LEN(8)
@@ -138,13 +139,12 @@ DCL        VAR(&SUBPATH)    TYPE(*CHAR) LEN(20) VALUE('/main/')
 DCL        VAR(&ERRMSG)     TYPE(*CHAR) LEN(132) VALUE(*BLANK)
 DCL        VAR(&MEANS)      TYPE(*CHAR) LEN(60)
 DCL        VAR(&CURRENT)    TYPE(*CHAR) LEN(10)  VALUE('*CURRENT  ')
-DCL        VAR(&TENBLANKS)  TYPE(*CHAR) LEN(10)  VALUE('          ')
 DCL        VAR(&NOPWD)      TYPE(*CHAR) LEN(10)  VALUE('*NOPWD    ')
 DCL        VAR(&MYHANDLE)   TYPE(*CHAR) LEN(12)
-DCL        VAR(&TEMPHANDLE) TYPE(*CHAR) LEN(12)
-DCL        VAR(&ERROR)      TYPE(*CHAR) LEN(16) +
-             VALUE(X'00000010000000000000000000000000')
-DCL        VAR(&BYT_AVAIL)  TYPE(*INT) LEN(4)   STG(*DEFINED) DEFVAR(&ERROR 5)
+DCL        VAR(&TEMPHANDLE) TYPE(*CHAR) LEN(12)          
+DCL        VAR(&ERROR)      TYPE(*CHAR) LEN(16) VALUE(X'0000001000000000')
+DCL        VAR(&BYT_AVAIL)  TYPE(*INT)  LEN(4)  STG(*DEFINED) DEFVAR(&ERROR 5)
+DCL        VAR(&MSGID)      TYPE(*CHAR) LEN(7)  STG(*DEFINED) DEFVAR(&ERROR 9)
 
 
 DCLF       FILE(QTEMP/GUIDE00F)
@@ -454,11 +454,12 @@ MONMSG MSGID(CPF0000) EXEC(GOTO CMDLBL(FINE))
 CHGJOB LOG(4 00 &LOG) LOGCLPGM(&LOGCLPGM) 
 IF COND(&USRPRF *NE &CURRENT) THEN(DO)
   IF COND(%SST(&USRPRF 1 1) *EQ '*') THEN(CHGVAR VAR(&USRPRF) VALUE(%SST(&USRPRF 2 9)))
-  CALLPRC PRC('QsyGetProfileHandleNoPwd') PARM(&MYHANDLE   &CURRENT &TENBLANKS &ERROR) 
+  CALLPRC PRC('QsyGetProfileHandleNoPwd') PARM(&MYHANDLE   &CURRENT &NOPWD     &ERROR) /* 1 */
+  CHGVAR VAR(&STEP) VALUE(0)
   CALLSUBR SUBR(CHECKERROR)
-  CALLPRC PRC('QsyGetProfileHandleNoPwd') PARM(&TEMPHANDLE &USRPRF  &NOPWD     &ERROR) 
+  CALLPRC PRC('QsyGetProfileHandleNoPwd') PARM(&TEMPHANDLE &USRPRF  &NOPWD     &ERROR) /* 2 */
   CALLSUBR SUBR(CHECKERROR)
-  CALLPRC PRC('QsySetToProfileHandle')    PARM(&TEMPHANDLE                     &ERROR)
+  CALLPRC PRC('QsySetToProfileHandle')    PARM(&TEMPHANDLE                     &ERROR) /* 3 */
   CALLSUBR SUBR(CHECKERROR)
 ENDDO
 
@@ -466,11 +467,11 @@ CALL PGM(QTEMP/BUILD) PARM(&DEVOPT &TGTRLS &TGTLIB)
 MONMSG MSGID(CPF0000)
 
 IF COND(&USRPRF *NE &CURRENT) THEN(DO)
-  CALLPRC PRC('QsySetToProfileHandle')    PARM(&MYHANDLE                       &ERROR)
+  CALLPRC PRC('QsySetToProfileHandle')    PARM(&MYHANDLE                       &ERROR) /* 4 */
   CALLSUBR SUBR(CHECKERROR)
-  CALLPRC PRC('QsyReleaseProfileHandle')  PARM(&TEMPHANDLE                     &ERROR)
+  CALLPRC PRC('QsyReleaseProfileHandle')  PARM(&TEMPHANDLE                     &ERROR) /* 5 */
   CALLSUBR SUBR(CHECKERROR)
-  CALLPRC PRC('QsyReleaseProfileHandle')  PARM(&MYHANDLE                       &ERROR)
+  CALLPRC PRC('QsyReleaseProfileHandle')  PARM(&MYHANDLE                       &ERROR) /* 6 */
   CALLSUBR SUBR(CHECKERROR)
 ENDDO  
 
@@ -494,9 +495,13 @@ SUBR SUBR(EMIT80)
 ENDSUBR
 
 SUBR SUBR(CHECKERROR)
+  CHGVAR VAR(&STEP) VALUE(&STEP + 1)
   IF COND(&BYT_AVAIL > 0) THEN(DO)
     IF COND(&VERBOSE *EQ 'L') THEN(DO)
-       CHGVAR     VAR(&MSGDTA) VALUE('Error in changing user' *TCAT &X15 *CAT &NL)
+       CHGVAR     VAR(&MSGDTA) VALUE('Error in changing user (step: ' +
+                       *CAT %CHAR(&STEP) *TCAT ', length: ' + 
+                       *CAT %CHAR(&BYT_AVAIL) *TCAT ', exceptid: ' +
+                       *CAT &MSGID *TCAT ')' *CAT &X15 *CAT &NL)
        CALLPRC    PRC('printf') PARM((&MSGDTA)) RTNVAL(&EC_P)
     ENDDO
   ENDDO   
