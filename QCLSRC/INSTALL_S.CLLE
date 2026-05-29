@@ -1,4 +1,4 @@
-PGM        PARM(&GIT_USER &PACKAGEN &GITTOKEN &TGTLIB &DEVOPT &TGTRLS &OMISSIBLE)
+PGM        PARM(&GIT_USER &PACKAGEN &GITTOKEN &TGTLIB &DEVOPT &TGTRLS &USRPRF &OMISSIBLE)
 DCLPRCOPT  LOG(*NO) ALWRTVSRC(*NO)
 COPYRIGHT  TEXT('Andrea Ribuoli © 2026 - WOPASE Installer')
 DCL        VAR(&GIT_USER)   TYPE(*CHAR) LEN(30)
@@ -7,6 +7,7 @@ DCL        VAR(&GITTOKEN)   TYPE(*CHAR) LEN(40)
 DCL        VAR(&TGTLIB)     TYPE(*CHAR) LEN(10)
 DCL        VAR(&DEVOPT)     TYPE(*CHAR) LEN(1)
 DCL        VAR(&TGTRLS)     TYPE(*CHAR) LEN(10)
+DCL        VAR(&USRPRF)     TYPE(*CHAR) LEN(10)
 DCL        VAR(&OMISSIBLE)  TYPE(*CHAR) LEN(1)
 DCL        VAR(&VERBOSE)    TYPE(*CHAR) LEN(1)
 DCL        VAR(&HOST_B)     TYPE(*CHAR) LEN(49) VALUE('raw.githubusercontent.com')
@@ -445,7 +446,8 @@ MONMSG MSGID(CPF0000)
 
 QUIT: IF COND(&VERBOSE *EQ 'L') THEN(DO)
    CHGVAR     VAR(&MSGDTA) VALUE( 'Version: '    *CAT &CUR_OSV *CAT +
-             '                     Language Feature: ' *CAT &LANG_FC *TCAT &X15 *CAT &NL)
+             '      Language Feature: ' *CAT &LANG_FC *CAT +
+             '      User Profile: ' *CAT &USRPRF *TCAT &X15 *CAT &NL)
    CALLPRC    PRC('printf') PARM((&MSGDTA)) RTNVAL(&EC_P)
 ENDDO
 
