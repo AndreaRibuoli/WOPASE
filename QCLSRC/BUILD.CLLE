@@ -70,7 +70,8 @@
 
              CRTCMD     CMD(&TGTLIB/INSTALL) PGM(&TGTLIB/INSTALL)  +
                           SRCFILE(&SRCLIB/QCMDSRC) SRCMBR(INSTALL) +
-                          TEXT('WOPASE installer (3/3)') PRDLIB(&TGTLIB)
+                          TEXT('WOPASE installer (3/3)') PRDLIB(&TGTLIB) +
+                          ALWLMTUSR(*YES)
              IF         COND(&DEVOPT *EQ 'V') THEN(GOTO CMDLBL(SKIP1))             
              DLTSPLF    FILE(INSTALL)
              MONMSG     MSGID(CPF3303) EXEC(DO)
