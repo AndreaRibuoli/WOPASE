@@ -152,8 +152,8 @@ One of the concerns I received from \-welcomed\- early reviews was that the `QTE
 from the  `QTEMP/QCLSRC/BUILD.CLLE` (of the package being installed), 
 uses the authority of the profile that runs `WOPASE/INSTALL` command. 
 The suggestion to use a limited\-authority profile to run `WOPASE/INSTALL` in the first place was not a good one,
-expecially because I am openly publishing **WOPASE** (as I did on the past with *PASERIE*) to promote **Source\-Level Distribution**
-for *IBM i*.
+expecially because I am openly publishing **WOPASE** to promote **Source\-Level Distribution**
+for *IBM i* (as I did on the past with *PASERIE*).
 
 In the PREFACE of the excellent **AUTOTOOLS** book by *John Calcote* (2010, 2020) the author clarifies the topic:
 
@@ -193,7 +193,7 @@ CRTUSRPRF USRPRF(WOPASE) PASSWORD(*NONE) +
 The `VERBOSE(L)` will print the error messages eventually associated with the 6 API calls mentioned but
 **without blocking execution**: this means that if the WOPASE user profile is not existing 
 (or "the administrator" does not have `*USE` authority over it) the installation will
-proceed as usuals.
+proceed as usual.
 
 I will leave this logic for one week.
 
