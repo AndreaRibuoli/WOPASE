@@ -146,6 +146,62 @@ The engine. This is where the actual work happens:
 8. **Stores in QTEMP** — writes each converted source into the appropriate source physical file in QTEMP
 9. **Compiles and runs BUILD** — compiles `QTEMP/QCLSRC(BUILD)` into a program and calls it, passing the target library, target release, and development options
 
+## The new RUNUNDER option
+
+One of the concerns I received from \-welcomed\- early reviews was that the `QTEMP/BUILD` program, compiled in `QTEMP` 
+from the  `QTEMP/QCLSRC/BUILD.CLLE` (of the package being installed), 
+uses the authority of the profile that runs `WOPASE/INSTALL` command. 
+The suggestion to use a limited\-authority profile to run `WOPASE/INSTALL` in the first place was not a good one,
+expecially because I am openly publishing **WOPASE** (as I did on the past with *PASERIE*) to promote **Source\-Level Distribution**
+for *IBM i*.
+
+In the PREFACE of the excellent **AUTOTOOLS** book by *John Calcote* (2010, 2020) the author clarifies the topic:
+
+<cite>
+"Source-level distribution relegates to the end user a particular portion of the responsability of software developent
+that has traditionally been assumed by the software developer --namely, building products from source code.
+But the end users are often not developers, so most of them won't know how to properly build the package.
+The solution to this problem, from the early days of the open source movement, has been to make the package 
+build and installation processes as simple as possible for the end user so that he could perform a few
+well-understood steps to have the package built and installed cleanly on his system" 
+</cite>
+
+As soon as *WOPASE* is pure\-ILE -when compared with *PASERIE*- this could pass an IBM i administrator a confidence that could
+be dangerous if the author of the GitHub repository is not known.
+
+This is why I have introduced the first support of a new option: **RUNUNDER**.
+The value `*CURRENT` will work as today, i.e. submitting installation in the calling job profile.
+The value `*WOPASE` will trigger the wrapping of `QTEMP/BUILD` program 
+inside 2 groups of API calls.
+
+In the first group I call `QsyGetProfileHandleNoPwd()` API twice (one for the current user \-"the administrator"\- and
+one for user profile *WOPASE*) and the `QsySetToProfileHandle()` to set WOPASE as the user.
+
+In the second group (executing just after the `QTEMP/BUILD` call) I invoke the `QsySetToProfileHandle()` API
+to re\-establish "the administrator" as the current user and then the `QsyReleaseProfileHandle()` API 
+twice to release the handles. 
+
+I suggest to create the `WOPASE` user profile this way:
+
+``` CL
+CRTUSRPRF USRPRF(WOPASE) PASSWORD(*NONE) +
+          STATUS(*ENABLED) USRCLS(*USER) SPCAUT(*NONE) +
+          INLMNU(*SIGNOFF) INLPGM(*NONE) +
+          LMTCPB(*YES) AUT(*EXCLUDE)
+```
+
+The `VERBOSE(L)` will print the error messages eventually associated with the 6 API calls mentioned but
+**without blocking execution**: this means that if the WOPASE user profile is not existing 
+(or "the administrator" does not have `*USE` authority over it) the installation will
+proceed as usuals.
+
+I will leave this logic for one week.
+
+Next update I will make `RUNUNDER(*WOPASE)` the default and I will block installation at the first error
+occurring in one of these six API calls. 
+
+Updating WOPASE itself from installed versions preceeding the introduction of `RUNUNDER` will not auto\-install.
+
 ## The GUIDANCE.TXT Manifest
 
 The `GUIDANCE.TXT` file in the root of a repository tells WOPASE what to download and how to build it.
