@@ -153,7 +153,7 @@ from the  `QTEMP/QCLSRC/BUILD.CLLE` (of the package being installed),
 uses the authority of the profile that runs `WOPASE/INSTALL` command. 
 The suggestion to use a limited\-authority profile to run `WOPASE/INSTALL` in the first place was not a good one,
 expecially because I am openly publishing **WOPASE** to promote **Source\-Level Distribution**
-for *IBM i* (as I did on the past with *PASERIE*).
+for *IBM i* (as I did in the past with *PASERIE*).
 
 In the PREFACE of the excellent **AUTOTOOLS** book by *John Calcote* (2010, 2020) the author clarifies the topic:
 
@@ -165,6 +165,7 @@ The solution to this problem, from the early days of the open source movement, h
 build and installation processes as simple as possible for the end user so that he could perform a few
 well-understood steps to have the package built and installed cleanly on his system" 
 </cite>
+
 
 As soon as *WOPASE* is pure\-ILE -when compared with *PASERIE*- this could pass an IBM i administrator a confidence that could
 be dangerous if the author of the GitHub repository is not known.
