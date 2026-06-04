@@ -535,7 +535,13 @@ RETRY:  CHGVAR VAR(&REQUEST) +
                         'User-Agent: IBM_i_ILE_CL_WOPASE'                  *CAT &CRLF_E *CAT +
                         'Accept: text/html'                                *CAT &CRLF_E *CAT +
                         'Accept-Language: it-IT,it'                        *CAT &CRLF_E *CAT +
-                        'Connection: keep-alive'              *CAT &CRLF_E *CAT &CRLF_E *CAT &NULL)
+                        'Connection: keep-alive'                           *CAT &CRLF_E)
+
+  IF COND(&GITTOKEN *NE *BLANKS) THEN( +
+    CHGVAR VAR(&REQUEST) VALUE(&REQUEST *TCAT 'Authorization: token ' *CAT &GITTOKEN *CAT &CRLF_E))
+
+  CHGVAR VAR(&REQUEST) VALUE(&REQUEST *TCAT &CRLF_E *CAT &NULL)
+                      
   CHGVAR VAR(&REQ_P) VALUE(%ADDRESS(&REQUEST))
   CALLPRC PRC('strlen') PARM((&REQ_P *BYVAL)) RTNVAL(&REQLEN) 
   CHGVAR VAR(&IN_BYTES) VALUE(&REQLEN)
