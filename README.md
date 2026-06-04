@@ -203,6 +203,30 @@ occurring in one of these six API calls.
 
 Updating WOPASE itself from installed versions preceeding the introduction of `RUNUNDER` will not auto\-install.
 
+## Activating authorization token
+
+To make `YOURGITPAT(*GETPAT)` work flawlessly, you need to create a Data Area named **GITTOKEN** in a library 
+that is in your library list (or in WOPASE if you do not share the installation with other colleagues).
+Run this command on your IBM i command line:
+
+```
+CRTDTAARA DTAARA(GITTOKEN) TYPE(*CHAR) LEN(40) TEXT('GitHub PAT for WOPASE') +
+                           VALUE('your_40_character_github_pat_here')
+```
+
+A better solution would be to consider the `WOPASE/GETPAT` CLLE program as a template for *your own PATs handling*.
+You could create a program called `WOPASE/GETPAT` that \-based on the current user\- 
+returns the appropriate GitHub PAT. 
+
+The proposed implementation is deliberatly simple and refers to a DATA AREA:
+
+``` CL
+PGM PARM(&GITTOKEN)
+DCL VAR(&GITTOKEN) TYPE(*CHAR) LEN(40)
+RTVDTAARA DTAARA(GITTOKEN (1 40)) RTNVAR(&GITTOKEN)             
+FINE: ENDPGM
+```
+
 ## The GUIDANCE.TXT Manifest
 
 The `GUIDANCE.TXT` file in the root of a repository tells WOPASE what to download and how to build it.
