@@ -53,7 +53,8 @@ DCL        VAR(&F_JUSR)   TYPE(*CHAR) LEN(10) STG(*DEFINED) DEFVAR(&FILTER 19)
 DCL        VAR(&F_JNUM)   TYPE(*CHAR) LEN(6)  STG(*DEFINED) DEFVAR(&FILTER 29)
 DCL        VAR(&F_JLOG)   TYPE(*CHAR) LEN(10) STG(*DEFINED) DEFVAR(&FILTER 35)
 DCL        VAR(&RTCD)     TYPE(*INT)  LEN(4)
-DCL        VAR(&STATUS)   TYPE(*INT)  LEN(4)
+DCL        VAR(&STATUS)   TYPE(*INT)  LEN(4) 
+DCL        VAR(&STSPTR)   TYPE(*PTR)  ADDRESS(&STATUS)
 DCL        VAR(&OPTIONS)  TYPE(*INT)  LEN(4)
 DCL        VAR(&NL)       TYPE(*CHAR) LEN(1) VALUE(X'00')
 DCL        VAR(&JCURLOP)  TYPE(*CHAR) LEN(10)
@@ -88,7 +89,7 @@ CHGVAR     VAR(&ARG6_P) VALUE(%ADDR(&TGTRLS0))
 CHGVAR     VAR(&ARG7_P) VALUE(%ADDR(&USRPRF0))
 CHGVAR     VAR(&ARG8_P) VALUE(%ADDR(&VERBOSE0))
 CHGVAR     VAR(&ARG9_P) VALUE(*NULL)
-CHGVAR     VAR(&FLAGS)  VALUE(16)  /* SPAWN_SETTHREAD_NP */
+CHGVAR     VAR(&FLAGS)  VALUE(0)
 CHGVAR     VAR(&PGROUP) VALUE(-1)
 CHGVAR     VAR(&SIGMASK) VALUE(0)
 CHGVAR     VAR(&SIGDEFT) VALUE(0)
@@ -109,27 +110,13 @@ IF         COND(&RTCD < 0) THEN(DO)
 SNDPGMMSG  MSG('Non ha funzionato: Qp0wGetJobID =' *BCAT %CHAR(&RTCD))
 GOTO CMDLBL(EXIT)
 ENDDO
-CALLPRC    PRC('waitpid') PARM((&PID *BYVAL) (&STATUS *BYREF) (&OPTIONS *BYVAL)) RTNVAL(&RTCD)
+CALLPRC    PRC('waitpid') PARM((&PID *BYVAL) (&STSPTR *BYREF) (&OPTIONS *BYVAL)) RTNVAL(&RTCD)
 IF         COND(&RTCD < 0) THEN(DO)
-  SELECT
-    WHEN COND(&RTCD *EQ -7999) THEN( +
-      SNDPGMMSG  MSG('QsyGetProfileHandleNoPwd failed for *CURRENT'))       /* 1 */
-    WHEN COND(&RTCD *EQ -7998) THEN( +
-      SNDPGMMSG  MSG('QsyGetProfileHandleNoPwd failed for RUNUNDER user'))  /* 2 */
-    WHEN COND(&RTCD *EQ -7997) THEN( +
-      SNDPGMMSG  MSG('QsySetToProfileHandle failed for RUNUNDER user'))     /* 3 */
-    WHEN COND(&RTCD *EQ -7996) THEN( +
-      SNDPGMMSG  MSG('QsySetToProfileHandle failed for *CURRENT'))          /* 4 */
-    WHEN COND(&RTCD *EQ -7995) THEN( +
-      SNDPGMMSG  MSG('QsyReleaseProfileHandle failed for RUNUNDER user'))   /* 5 */
-    WHEN COND(&RTCD *EQ -7994) THEN( +
-      SNDPGMMSG  MSG('QsyReleaseProfileHandle failed for *CURRENT'))        /* 6 */
-    OTHERWISE CMD( +
-      SNDPGMMSG  MSG('Non ha funzionato:  waitpid() =' *BCAT %CHAR(&RTCD)))
-  ENDSELECT
+  SNDPGMMSG  MSG('Non ha funzionato:  waitpid() =' *BCAT %CHAR(&RTCD))
   GOTO CMDLBL(EXIT)
 ENDDO
-SNDPGMMSG  MSG(&JOBNME *TCAT ' completed.')
+/* SNDPGMMSG  MSG(&JOBNME *TCAT ' completed (status=' *CAT %CHAR(&STATUS) *TCAT ').') */
+SNDPGMMSG  MSG(&JOBNME *TCAT ' completed: check spool file for potential errors (to be improved!)')
 IF COND((&DEVOPT *EQ 'B') *OR (&VERBOSE *EQ 'L')) THEN(GOTO CMDLBL(EXIT))
 CHGVAR     VAR(&F_LEN)    VALUE(44)
 CHGVAR     VAR(&F_DAYS)   VALUE(0)
