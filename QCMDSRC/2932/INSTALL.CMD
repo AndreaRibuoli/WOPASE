@@ -12,7 +12,7 @@
              PARM       KWD(TGTRLS)  TYPE(*CHAR) LEN(10) DFT(*CURRENT) +
                           SPCVAL((*CURRENT '*CURRENT') (*PRV '*PRV')) +
                           PROMPT('Rilascio di destinazione')
-             PARM       KWD(RUNUNDER) TYPE(*CHAR) LEN(10) DFT(*CURRENT) +
+             PARM       KWD(RUNUNDER) TYPE(*CHAR) LEN(10) DFT(*WOPASE) +
                           SPCVAL((*CURRENT '*CURRENT') (*WOPASE '*WOPASE')) +
                           PROMPT('Profilo utilizzato')
              PARM       KWD(DEVOPT) TYPE(*CHAR) LEN(1) DFT(N) +

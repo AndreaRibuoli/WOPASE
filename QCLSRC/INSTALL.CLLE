@@ -111,8 +111,23 @@ GOTO CMDLBL(EXIT)
 ENDDO
 CALLPRC    PRC('waitpid') PARM((&PID *BYVAL) (&STATUS *BYREF) (&OPTIONS *BYVAL)) RTNVAL(&RTCD)
 IF         COND(&RTCD < 0) THEN(DO)
-SNDPGMMSG  MSG('Non ha funzionato:  waitpid() =' *BCAT %CHAR(&RTCD))
-GOTO CMDLBL(EXIT)
+  SELECT
+    WHEN COND(&RTCD *EQ -7999) THEN( +
+      SNDPGMMSG  MSG('QsyGetProfileHandleNoPwd failed for *CURRENT'))       /* 1 */
+    WHEN COND(&RTCD *EQ -7998) THEN( +
+      SNDPGMMSG  MSG('QsyGetProfileHandleNoPwd failed for RUNUNDER user'))  /* 2 */
+    WHEN COND(&RTCD *EQ -7997) THEN( +
+      SNDPGMMSG  MSG('QsySetToProfileHandle failed for RUNUNDER user'))     /* 3 */
+    WHEN COND(&RTCD *EQ -7996) THEN( +
+      SNDPGMMSG  MSG('QsySetToProfileHandle failed for *CURRENT'))          /* 4 */
+    WHEN COND(&RTCD *EQ -7995) THEN( +
+      SNDPGMMSG  MSG('QsyReleaseProfileHandle failed for RUNUNDER user'))   /* 5 */
+    WHEN COND(&RTCD *EQ -7994) THEN( +
+      SNDPGMMSG  MSG('QsyReleaseProfileHandle failed for *CURRENT'))        /* 6 */
+    OTHERWISE CMD( +
+      SNDPGMMSG  MSG('Non ha funzionato:  waitpid() =' *BCAT %CHAR(&RTCD)))
+  ENDSELECT
+  GOTO CMDLBL(EXIT)
 ENDDO
 SNDPGMMSG  MSG(&JOBNME *TCAT ' completed.')
 IF COND((&DEVOPT *EQ 'B') *OR (&VERBOSE *EQ 'L')) THEN(GOTO CMDLBL(EXIT))
