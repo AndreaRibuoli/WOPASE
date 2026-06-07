@@ -546,23 +546,17 @@ RETRY:  CHGVAR VAR(&REQUEST) +
           VALUE('GET /' *CAT &GIT_USER *TCAT '/' *CAT &PACKAGEN *TCAT &SUBPATH)    
   IF COND(%TRIM(&SRCFILE) *NE ' ') THEN( +
     CHGVAR VAR(&REQUEST) VALUE(&REQUEST *TCAT &SRCFILE  *TCAT '/'))
-  IF COND(&GITTOKEN *EQ ' ') THEN( + 
-    CHGVAR VAR(&REQUEST) +
-    VALUE(&REQUEST *TCAT &SRCMBR *TCAT '.' *CAT &SRCTYPE *TCAT ' HTTP/1.1' *CAT &CRLF_E *CAT +
-                        'Host:' *BCAT  &HOST_B  *TCAT ':443'               *CAT &CRLF_E *CAT +
-                        'User-Agent: IBM_i_ILE_CL_WOPASE'                  *CAT &CRLF_E *CAT +
-                        'Accept: text/html'                                *CAT &CRLF_E *CAT +
-                        'Accept-Language: it-IT,it'                        *CAT &CRLF_E *CAT +
-                        'Connection: keep-alive'              *CAT &CRLF_E *CAT &CRLF_E *CAT &NULL))
-  ELSE CMD( + 
-    CHGVAR VAR(&REQUEST) +
-    VALUE(&REQUEST *TCAT &SRCMBR *TCAT '.' *CAT &SRCTYPE *TCAT ' HTTP/1.1' *CAT &CRLF_E *CAT +
-                        'Host:' *BCAT  &HOST_B  *TCAT ':443'               *CAT &CRLF_E *CAT +
-                        'User-Agent: IBM_i_ILE_CL_WOPASE'                  *CAT &CRLF_E *CAT +
-                        'Accept: text/html'                                *CAT &CRLF_E *CAT +
-                        'Accept-Language: it-IT,it'                        *CAT &CRLF_E *CAT +
-                        'Authorization: token ' *CAT &GITTOKEN             *CAT &CRLF_E *CAT +
-                        'Connection: keep-alive'              *CAT &CRLF_E *CAT &CRLF_E *CAT &NULL))
+  CHGVAR VAR(&REQUEST) +                                                                            
+    VALUE(&REQUEST *TCAT &SRCMBR *TCAT '.' *CAT &SRCTYPE *TCAT ' HTTP/1.1' *CAT &CRLF_E *CAT +      
+                      'Host:' *BCAT  &HOST_B  *TCAT ':443'               *CAT &CRLF_E *CAT +      
+                      'User-Agent: IBM_i_ILE_CL_WOPASE'                  *CAT &CRLF_E *CAT +      
+                      'Accept: text/html'                                *CAT &CRLF_E *CAT +      
+                      'Accept-Language: it-IT,it'                        *CAT &CRLF_E)            
+  IF COND(&GITTOKEN *NE ' ') THEN( +                                                                
+    CHGVAR VAR(&REQUEST) VALUE(&REQUEST *TCAT +                                                     
+                      'Authorization: token ' *CAT &GITTOKEN             *CAT &CRLF_E))           
+  CHGVAR VAR(&REQUEST) VALUE(&REQUEST *TCAT +                                                       
+                      'Connection: keep-alive'              *CAT &CRLF_E *CAT &CRLF_E *CAT &NULL) 
                       
   CHGVAR VAR(&REQ_P) VALUE(%ADDRESS(&REQUEST))
   CALLPRC PRC('strlen') PARM((&REQ_P *BYVAL)) RTNVAL(&REQLEN) 
