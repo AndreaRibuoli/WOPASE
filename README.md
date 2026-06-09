@@ -90,6 +90,17 @@ API gsk_environment_init() failed with GSK_IBMI_ERROR_NO_ACCESS (6003)
 To perform an update, *WOPASE* can rebuild itself from latest GitHub source code:
 
 ```
+WOPASE/INSTALL REPO_OWNER(AndreaRibuoli) REPOSITORY(WOPASE) RUNUNDER(*CURRENT)
+```
+
+The first WOPASE installation will build the objects with the \*CURRENT ownership.
+To leverage the **new *RUNUNDER* default** (`*WOPASE`) I suggest 
+creating the user profile **WOPASE** (as explained in *The new RUNRUNDER option*)
+and trasferring ownership of all objects in WOPASE librery to WOPASE user.
+
+In this environment the standard update will be executed with:
+
+```
 WOPASE/INSTALL REPO_OWNER(AndreaRibuoli) REPOSITORY(WOPASE)
 ```
 
