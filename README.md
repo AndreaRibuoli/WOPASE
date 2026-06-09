@@ -108,6 +108,7 @@ WOPASE/INSTALL REPO_OWNER(AndreaRibuoli) REPOSITORY(SIMPLE)
 | **YOURGITPAT** | GitHub personal access token | `*NONE` |
 | **TGTLIB** | Target library for compiled objects | `*REPOSITORY` |
 | **TGTRLS** | Target release for compilation | `*CURRENT` |
+| **RUNUNDER** | Build user profile | `*WOPASE` |
 | **DEVOPT** | Development option | `N` |
 | **LOGOUTPUT** | Job log output handling | `*PND` |
 | **VERBOSE** | Verbose mode | `N` |
@@ -167,20 +168,12 @@ well-understood steps to have the package built and installed cleanly on his sys
 </cite>
 
 
-As soon as *WOPASE* is pure\-ILE -when compared with *PASERIE*- this could pass an IBM i administrator a confidence that could
-be dangerous if the author of the GitHub repository is not known.
 
 This is why I have introduced the first support of a new option: **RUNUNDER**.
-The value `*CURRENT` will work as today, i.e. submitting installation in the calling job profile.
-The value `*WOPASE` will trigger the wrapping of `QTEMP/BUILD` program 
-inside 2 groups of API calls.
-
-In the first group I call `QsyGetProfileHandleNoPwd()` API twice (one for the current user \-"the administrator"\- and
-one for user profile *WOPASE*) and the `QsySetToProfileHandle()` to set WOPASE as the user.
-
-In the second group (executing just after the `QTEMP/BUILD` call) I invoke the `QsySetToProfileHandle()` API
-to re\-establish "the administrator" as the current user and then the `QsyReleaseProfileHandle()` API 
-twice to release the handles. 
+Using the value `*CURRENT` will work as PASERIE/INSTALL, i.e. submitting installation in the calling job profile.
+The value `*WOPASE` (now the **default**) will trigger the wrapping of `QTEMP/BUILD` program 
+inside 2 groups of API calls that will take care of executing the build under **WOPASE**
+user profile.
 
 I suggest to create the `WOPASE` user profile this way:
 
@@ -191,17 +184,8 @@ CRTUSRPRF USRPRF(WOPASE) PASSWORD(*NONE) +
           LMTCPB(*YES) AUT(*EXCLUDE)
 ```
 
-The `VERBOSE(L)` will print the error messages eventually associated with the 6 API calls mentioned but
-**without blocking execution**: this means that if the WOPASE user profile is not existing 
-(or "the administrator" does not have `*USE` authority over it) the installation will
-proceed as usual.
+If the WOPASE user profile is not existing (or "the administrator" does not have `*USE` authority over it) the installation will fail.
 
-I will leave this logic for one week.
-
-Next update I will make `RUNUNDER(*WOPASE)` the default and I will block installation at the first error
-occurring in one of these six API calls. 
-
-Updating WOPASE itself from installed versions preceeding the introduction of `RUNUNDER` will not auto\-install.
 
 ## Activating authorization token
 
